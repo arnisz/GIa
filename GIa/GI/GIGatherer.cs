@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+
 using static System.Net.WebRequestMethods;
 
 namespace GI
@@ -60,14 +61,7 @@ namespace GI
 			if (string.IsNullOrEmpty(gateIPaddress))
 			{
 				gateIPaddress = IPAddress;
-			} else
-			{
-				if (IPAddress != gateIPaddress)
-				{
-					throw new Exception("IP Adresse kann nicht geändert werden!");
-				}
-				
-			}
+			} 
 			
 		}
 
@@ -76,23 +70,31 @@ namespace GI
         #region FTP-Related
         private async Task< List<GIFile>> FTPDirectory(string path)
 		{
-			if (IPAddress == null)
+			try
 			{
-				throw new System.IO.IOException("Hostname oder IP Adresse unbekannt. Wurde IP-Adresse angegeben?");
-				return null;
-			} else
-			{
-				MyClientConnect();
-				Thread.Sleep(100);
-				List<GIFile> ftp = new List<GIFile>();
-				FtpListItem[] items = myClient.GetListing(path);
-				foreach (FtpListItem item in items)
+				if (IPAddress == null)
 				{
-					GIFile fileinfo = new GIFile(item.Name);
-					fileinfo.Size = item.Size;
-					ftp.Add(fileinfo);
+					throw new System.IO.IOException("Hostname oder IP Adresse unbekannt. Wurde IP-Adresse angegeben?");
+					return null;
 				}
-				return ftp;
+				else
+				{
+					MyClientConnect();
+					Thread.Sleep(100);
+					List<GIFile> ftp = new List<GIFile>();
+					FtpListItem[] items = myClient.GetListing(path);
+					foreach (FtpListItem item in items)
+					{
+						GIFile fileinfo = new GIFile(item.Name);
+						fileinfo.Size = item.Size;
+						ftp.Add(fileinfo);
+					}
+					return ftp;
+				}
+			} catch (Exception ex)
+			{
+				throw ex;
+				return null;
 			}
 
 		}
@@ -136,67 +138,79 @@ namespace GI
 
 		public async Task<List<GIFile>> GetFileInformations(IProgress<int> progress)
 		{
-			if (IPAddress == null)
+			try
 			{
-                throw new System.IO.IOException("Hostname oder IP Adresse unbekannt. Wurde IP-Adresse angegeben?");
+				if (IPAddress == null)
+				{
+					throw new System.IO.IOException("Hostname oder IP Adresse unbekannt. Wurde IP-Adresse angegeben?");
+					return null;
+				}
+				else
+				{
+					int _progressreport = 0;
+					int stepWidth = 3;
+					int unstablecounter = 40;  
+					string file = "";
+					progressReport();
+					List<GIFile> list = await FTPDirectory("/");
+					_progressreport += 3;
+					progressReport();
+					var item = list.Find(x => x.Filename == "#actual.sta");
+
+					file = await GetFile(item.Filename);
+					while (unstablecounter > 0 && !file.ContainsCI("CONFIGURATION STABLE"))
+					{
+						unstablecounter--;
+						file = await GetFile(item.Filename);
+						Thread.Sleep(500);
+						_progressreport += 3;
+						progressReport();
+						Thread.Sleep(500);
+						_progressreport += 3;
+						progressReport();
+					}
+					if (unstablecounter < 1)
+					{
+						throw new Exception("Es konnte keine stabile Konfiguration geladen werden. Module defekt?");
+					}
+
+					item.Content = file;
+
+					stepWidth = 72 / (list.Count);
+
+					if (_progressreport < 28) _progressreport = 28;
+
+
+					//erst wenn Configuration stabil andere dateien holen!
+
+					foreach (GIFile it in list)
+					{
+						_progressreport += stepWidth;
+						progressReport();
+						if (it.Filename != "#actual.sta")
+						{
+							file = await GetFile(it.Filename);
+							it.Content = file;
+						}
+					}
+
+					MyClientDisconnect();
+					_progressreport = 100;
+					progressReport();
+					return list;
+					void progressReport()
+					{
+						if (progress != null)
+						{
+							progress.Report(_progressreport);
+						}
+					}
+				}
+			} catch (Exception ex)
+			{
+				throw ex;
 				return null;
-			} else
-			{
-                int _progressreport = 0;
-                int stepWidth = 3;
-                int unstablecounter = 40;
-                string file = "";
-                progressReport();
-                List<GIFile> list = await FTPDirectory("/");
-                _progressreport += 3;
-                progressReport();
-                var item = list.Find(x => x.Filename == "#actual.sta");
-
-                file = await GetFile(item.Filename);
-                while (unstablecounter > 0 && !file.ContainsCI("CONFIGURATION STABLE"))
-                {
-                    unstablecounter--;
-                    file = await GetFile(item.Filename);
-                    Thread.Sleep(500);
-                    _progressreport += 3;
-                    progressReport();
-                    Thread.Sleep(500);
-                    _progressreport += 3;
-                    progressReport();
-                }
-
-                item.Content = file;
-
-                stepWidth = 70 / (list.Count);
-
-                if (_progressreport < 30) _progressreport = 30;
-
-
-                //erst wenn Configuration stabil andere dateien holen!
-
-                foreach (GIFile it in list)
-                {
-                    _progressreport += stepWidth;
-                    progressReport();
-                    if (it.Filename != "#actual.sta")
-                    {
-                        file = await GetFile(it.Filename);
-                        it.Content = file;
-                    }
-                }
-
-                MyClientDisconnect();
-                _progressreport = 100;
-                progressReport();
-                return list;
-                void progressReport()
-                {
-                    if (progress != null)
-                    {
-                        progress.Report(_progressreport);
-                    }
-                }
-            }
+			}
 		}
 	}
 }

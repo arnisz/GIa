@@ -24,15 +24,20 @@ namespace GIa
         private void button1_Click(object sender, EventArgs e)
         {
             GIGate giGate = GIGate.Instance;
-            textBox1.Text = "192.168.17.99";
+            if (textBox1.Text=="") textBox1.Text = "192.168.17.99";
+            giGate.IPAddress=textBox1.Text;
+
+            MessageBox.Show(GIGate.Instance.IPAddress);
+            if (Netzwerk.ip.IsValidIPAdress(textBox1.Text))
+            {
+                button2.Enabled = true;
+            } else
+            {
+                button2.Enabled=false;
+            }
+
             listBox1.Items.Clear();
             // var mod = giGate.FindModules();
-
-
-            GIGatherer g = GIGatherer.Instance;
-            g.SetIP(textBox1.Text);
-
-
 
             /*
 
@@ -56,22 +61,29 @@ namespace GIa
 
         private async void button2_Click(object sender, EventArgs e)
         {
-            // Action<int> ReportProgress = new Action<int>(x => MessageBox.Show(x.ToString()));
-            var progressIndicator = new Progress<int>(ReportProgress);
-
-            GIGate g = GIGate.Instance;
-            GIGatherer gIGatherer = GIGatherer.Instance;
-            gIGatherer.SetIP("192.168.17.99");
-
-            await Task.Run(()=> g.Initialize(progressIndicator));
-            
-            List<GIModule> gIModulesList = g.ListModules();
-            string info = $"Es sind {g.modulesCount} Messmodule vorhanden. \r";
-            foreach (GIModule module in gIModulesList)
+            try
             {
-                info += $" Adresse {module.Adress} UART: {module.Uart} hat S/N {module.SerialNumber} \r";
+                // Action<int> ReportProgress = new Action<int>(x => MessageBox.Show(x.ToString()));
+                var progressIndicator = new Progress<int>(ReportProgress);
+
+                GIGate g = GIGate.Instance;
+                GIGatherer gIGatherer = GIGatherer.Instance;
+            
+                await Task.Run(()=> g.Initialize(progressIndicator));
+            
+                List<GIModule> gIModulesList = g.ListModules();
+                string info = $"Es sind {g.modulesCount} Messmodule vorhanden. \r";
+                foreach (GIModule module in gIModulesList)
+                {
+                    info += $" Adresse {module.Adress} UART: {module.Uart} hat S/N {module.SerialNumber} \r";
+                }
+                MessageBox.Show(info);
+                button3.Enabled = true;
+            } catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
-            MessageBox.Show(info);
+
 
         }
 
@@ -83,10 +95,35 @@ namespace GIa
         private async void button3_Click(object sender, EventArgs e)
         {
             GIGate g = GIGate.Instance;
-            var mods = g.ListModules();
-            var mod = mods.Find(x => x.Adress == 1);
-            await mod.Initialize();
+            if (g.isInitialized)
+            {
+                listBox1.Items.Clear();
+                var mods = g.ListModules();
+                var mod = mods.Find(x => x.Adress == 1);
+                await mod.Initialize();
 
+                foreach (var m in mods)
+                {
+                    listBox1.Items.Add(m);
+                }
+            }
+        }
+
+        private void listBox1_DoubleClick(object sender, EventArgs e)
+        {
+
+        }
+
+        private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            var lbi = (GIModule) listBox1.SelectedItem;
+
+            string channels = "";
+            foreach (GIChannel c in lbi.GetGIChannels)
+            {
+                channels += $"Channel {c.VariableName} {c.Factor} \r";
+            }
+            Console.WriteLine(channels);
         }
     }
 }

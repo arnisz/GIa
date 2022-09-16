@@ -38,8 +38,14 @@ namespace GI
                 {
                     if (!ftpClient.IsConnected)
                     {
-                        ftpClient.Connect();
-                        var s = ftpClient.Status;
+                        try
+                        {
+                            ftpClient.Connect();
+                            var s = ftpClient.Status;
+                        } catch (Exception ex)
+                        {
+                            MessageBox.Show(ex.Message);
+                        }
 
                     }
                 }

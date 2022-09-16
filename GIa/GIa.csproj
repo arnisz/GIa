@@ -63,12 +63,14 @@
     <Compile Include="Form1.Designer.cs">
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
+    <Compile Include="GI\Formats\Formats.cs" />
     <Compile Include="GI\GIFile.cs" />
     <Compile Include="GI\GIChannel.cs" />
     <Compile Include="GI\GIGate.cs" />
     <Compile Include="GI\GIGatherer.cs" />
     <Compile Include="GI\GIModule.cs" />
     <Compile Include="GI\Myftp.cs" />
+    <Compile Include="Netzwerk\ip.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Form1.resx">

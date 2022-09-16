@@ -1,5 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -8,7 +10,7 @@ namespace GI
 	public class GIModule
 	{
 		private string modulType;
-		private long channelCount;
+		private int channelCount;
 		private GIChannel[] gIChannels;
 		private bool isInitialized = false;
 
@@ -25,25 +27,51 @@ namespace GI
 
 		public long SerialNumber { get; set; }
 
+		public List<GIChannel> GetGIChannels {
+			get 
+			{
+				if (!isInitialized)
+				{
+					Initialize();
+				}
+				return gIChannels.ToList();
+			}
+			set
+			{}
+		}
+
 		public int Uart { get; set; }
 
+		public int ChannelsNumber { get { return this.channelCount; } private set { } }
 		public string ConfigFile { get; set; }
 
 		// INIT Channels
-		// Kanaldaten werden in die Kanalobjekte übertragen
+		// Kanaldaten werden in die Kanalobjekte ï¿½bertragen
 		public async Task Initialize()
 		{
-			Regex regxDevice = new Regex(buildReg("Device"), RegexOptions.IgnoreCase);
-			var device = regxDevice.Match(this.ConfigFile).Value;
-			Regex regxChannelsCount = new Regex("VCnt=\\d*");
-			string scc = regxChannelsCount.Match(device).Value.Substring(5);
+			if (!isInitialized)
+			{
+				Regex regxDevice = new Regex(buildReg("Device"), RegexOptions.IgnoreCase);
+				var device = regxDevice.Match(this.ConfigFile).Value;
 
-            this.channelCount = int.Parse(scc);
+				Regex regxChannelsCount = new Regex("VCnt=\\d*");
+				string scc = regxChannelsCount.Match(device).Value.Substring(5);
 
-            Regex regxV0 = new Regex(buildReg("V0"), RegexOptions.IgnoreCase);
-            var V0 = regxV0.Match(this.ConfigFile).Value;
+				this.channelCount = int.Parse(scc);
 
-        }
+				gIChannels = new GIChannel[channelCount];
+				for (int i = 0; i < channelCount; i++)
+				{
+                    Regex regxV = new Regex(buildReg($"V{i}"), RegexOptions.IgnoreCase);
+					gIChannels[i] = new GIChannel(regxV.Match(this.ConfigFile).Value,this);
+					
+                    //
+                }
+
+			}
+
+			isInitialized = true;
+		}
 
 		private string buildReg(string Section)
 		{

@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
-
+using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace GI
 {
@@ -12,15 +12,15 @@ namespace GI
         public const string FtpUsername = "instrumentation4";
         public const string FtpPassword = "gantner";
     }
-	public class GIGate
-	{
+    public class GIGate
+    {
         public int modulesCount;
         private bool _initialized = false;
         private String ipAddress;
-		private String serialNumber;
+        private String serialNumber;
 
-		private GIModule[] gIModules;
-		private GIGatherer gIGatherer;
+        private GIModule[] gIModules;
+        private GIGatherer gIGatherer;
 
         #region Sigleton
 
@@ -52,7 +52,8 @@ namespace GI
         #endregion
 
         public String IPAddress
-        { get
+        {
+            get
             {
                 return ipAddress;
             }
@@ -63,73 +64,84 @@ namespace GI
         }
 
         public List<GIModule> ListModules()
-		{
-			List<GIModule> modules = new List<GIModule>();
-			try
-			{
-				foreach (GIModule module in gIModules)
-					if (module == null) { }
-					else
-					{
-						modules.Add(module);
-					}
-				return modules;
-			} catch (Exception ex)
-			{
-				return null;
-			}
-		}
+        {
+            List<GIModule> modules = new List<GIModule>();
+            try
+            {
+                foreach (GIModule module in gIModules)
+                    if (module == null) { }
+                    else
+                    {
+                        modules.Add(module);
+                    }
+                return modules;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
 
+        public bool isInitialized { get { return _initialized; } private set { } }
 
         //initialize Modules
         //Moduldaten werden in die Modulobjekte übertragen
         public async Task Initialize([Optional] IProgress<int> Progress)
         {
-            if (!_initialized)
+            try
             {
-                if (ipAddress==null)
+                if (!_initialized)
                 {
-                    ipAddress=GIGatherer.Instance.IPAddress;
+                    if (ipAddress == null)
+                    {
+                        ipAddress = GIGatherer.Instance.IPAddress;
+                    }
+                    GIGatherer.Instance.SetIP(ipAddress);
+                    List<GIFile> liGIFiles = await GIGatherer.Instance.GetFileInformations(Progress);
+                    var actual = liGIFiles.Find(x => x.Filename == "#actual.sta");
+                    //Module Informationen
+                    Regex regexLine = new Regex("TS:\\d.*STA-");
+                    Regex regexAdress = new Regex("AD:\\d*");
+                    Regex regexType = new Regex("TY:..\\d*");
+                    Regex regexSerial = new Regex("SNR-\\d*");
+                    Regex regexUart = new Regex("DEV:.UART\\d*");
+
+                    var modulelines = regexLine.Matches(actual.Content);
+                    modulesCount = modulelines.Count;
+                    gIModules = new GIModule[modulesCount];
+
+                    int _mcount = 0;
+                    foreach (Match i in modulelines)
+                    {
+                        string item = i.Value;
+                        gIModules[_mcount] = new GIModule();
+
+                        int adr = int.Parse(regexAdress.Match(item).Value.Substring(3));
+                        gIModules[_mcount].Adress = adr;
+
+                        string m = regexType.Match(item).Value;
+                        gIModules[_mcount].ModulType = m.Substring(3).TrimEnd(new char[] { '\t', '\r', '\n' });
+
+                        string sr = regexSerial.Match(item).Value.Substring(4);
+                        long n = long.Parse(sr);
+                        gIModules[_mcount].SerialNumber = n;
+
+                        string su = regexUart.Match(item).Value.Substring(9);
+                        int v = int.Parse(su);
+                        gIModules[_mcount].Uart = v;
+
+                        gIModules[_mcount].ConfigFile = liGIFiles.Find(x => x.Filename == $"@{v}_{adr}_c.gcf").Content;
+
+                        _mcount++;
+                    }
+
+                    _initialized = true;
                 }
-                List<GIFile> liGIFiles = await GIGatherer.Instance.GetFileInformations(Progress);
-                var actual = liGIFiles.Find(x => x.Filename == "#actual.sta");
-                //Module Informationen
-                Regex regexLine = new Regex("TS:\\d.*STA-");
-                Regex regexAdress = new Regex("AD:\\d*");
-                Regex regexType = new Regex("TY:..\\d*");
-                Regex regexSerial = new Regex("SNR-\\d*");
-                Regex regexUart = new Regex("DEV:.UART\\d*");
 
-                var modulelines = regexLine.Matches(actual.Content);
-                modulesCount = modulelines.Count;
-                gIModules = new GIModule[modulesCount];
-
-                int _mcount = 0;
-                foreach (Match i in modulelines)
-                {
-                    string item = i.Value;
-                    gIModules[_mcount] = new GIModule();
-
-                    int adr = int.Parse(regexAdress.Match(item).Value.Substring(3));
-                    gIModules[_mcount].Adress = adr;
-
-                    string m = regexType.Match(item).Value;
-                    gIModules[_mcount].ModulType = m.Substring(3);
-
-                    string sr = regexSerial.Match(item).Value.Substring(4);
-                    long n = long.Parse(sr);
-                    gIModules[_mcount].SerialNumber = n;
-
-                    string su = regexUart.Match(item).Value.Substring(9);
-                    int v= int.Parse(su);
-                    gIModules[_mcount].Uart = v;
-
-                    gIModules[_mcount].ConfigFile = liGIFiles.Find(x => x.Filename == $"@{v}_{adr}_c.gcf").Content;
-
-                    _mcount++;
-                }
-
-                _initialized = true;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
             }
 
         }
