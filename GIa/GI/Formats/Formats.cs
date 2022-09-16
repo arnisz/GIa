@@ -22,9 +22,11 @@ namespace GI.Formats
             
             return result;
 
-            
+        }
 
-            
+        public static string InitFormatSectionbuilder(string Section)
+        {
+            return $"\\[{Section}\\].*(?:\\r?\\n\\s*[^\\]\\[\\s].*)+";
         }
 
     }

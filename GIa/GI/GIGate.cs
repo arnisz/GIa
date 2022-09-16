@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace GI
 {
@@ -18,6 +17,7 @@ namespace GI
         private bool _initialized = false;
         private String ipAddress;
         private String serialNumber;
+        private List<GIFile> liGIFiles;
 
         private GIModule[] gIModules;
         private GIGatherer gIGatherer;
@@ -63,6 +63,16 @@ namespace GI
             }
         }
 
+        public GIFile GIConfigFile(string Filename)
+        {
+            return liGIFiles.Find(x => x.Filename == Filename);
+        }
+
+        public ref List<GIFile> GIConfigfilesList()
+        {
+            return ref liGIFiles;
+        }
+
         public List<GIModule> ListModules()
         {
             List<GIModule> modules = new List<GIModule>();
@@ -86,6 +96,7 @@ namespace GI
 
         //initialize Modules
         //Moduldaten werden in die Modulobjekte übertragen
+        //Daten aus #actual.sta
         public async Task Initialize([Optional] IProgress<int> Progress)
         {
             try
@@ -97,8 +108,10 @@ namespace GI
                         ipAddress = GIGatherer.Instance.IPAddress;
                     }
                     GIGatherer.Instance.SetIP(ipAddress);
-                    List<GIFile> liGIFiles = await GIGatherer.Instance.GetFileInformations(Progress);
+                    liGIFiles = await GIGatherer.Instance.GetFileInformations(Progress);
                     var actual = liGIFiles.Find(x => x.Filename == "#actual.sta");
+                    var summary = liGIFiles.Find(x => x.Filename == "#summary.sta");
+
                     //Module Informationen
                     Regex regexLine = new Regex("TS:\\d.*STA-");
                     Regex regexAdress = new Regex("AD:\\d*");
@@ -114,7 +127,7 @@ namespace GI
                     foreach (Match i in modulelines)
                     {
                         string item = i.Value;
-                        gIModules[_mcount] = new GIModule();
+                        gIModules[_mcount] = new GIModule(_mcount);
 
                         int adr = int.Parse(regexAdress.Match(item).Value.Substring(3));
                         gIModules[_mcount].Adress = adr;
@@ -141,7 +154,7 @@ namespace GI
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                throw ex;
             }
 
         }
