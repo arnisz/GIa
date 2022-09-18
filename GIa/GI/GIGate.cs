@@ -12,7 +12,7 @@ namespace GI
         public const string FtpUsername = "instrumentation4";
         public const string FtpPassword = "gantner";
     }
-    public class GIGate
+    public class GIGate:IDisposable
     {
         public int modulesCount;
         private bool _initialized = false;
@@ -160,5 +160,9 @@ namespace GI
 
         }
 
+        public void Dispose()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using GI.Formats;
 using fmt=GI.Formats.PatternCategory;
-using GantnerInstruments;
+
 
 namespace GI
 {
