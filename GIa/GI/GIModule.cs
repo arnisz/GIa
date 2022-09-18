@@ -2,8 +2,10 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+
 
 namespace GI
 {
@@ -13,7 +15,10 @@ namespace GI
 		private int channelCount;
 		private GIChannel[] gIChannels;
 		private bool isInitialized = false;
-        private int HCONNECTION = -1;
+
+
+
+
 
         //Module sollte wissen an welcher stelle es in Konfiguration vorkommt
 		//#summary.sta weist dem ersten Modul 0 zu. Reihenfolge Aufsteigend
@@ -23,13 +28,17 @@ namespace GI
 
 		
 
+		
+
 		public GIModule(int ModuleinConfig)
 		{
 			this.moduleNumberinConfig = ModuleinConfig;
 			gIGate = GIGate.Instance;
 		}
 
-		public int ModuleNumberInConfig { get { return moduleNumberinConfig; } private set { } }	
+
+
+        public int ModuleNumberInConfig { get { return moduleNumberinConfig; } private set { } }	
 
 		public int Adress { get; set; }
 		public string ModulType { get; set; }
@@ -86,5 +95,7 @@ namespace GI
         {
             return $"{this.Adress}-{this.ModulType}-{this.SerialNumber}";
         }
-    }
+
+
+	}
 }
