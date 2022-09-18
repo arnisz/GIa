@@ -6,11 +6,11 @@ using System.Runtime.InteropServices;
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die einer Assembly zugeordnet sind.
 [assembly: AssemblyTitle("GIa")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Calibration Helper Gantner Instruments")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("TIS")]
 [assembly: AssemblyProduct("GIa")]
-[assembly: AssemblyCopyright("Copyright ©  2022")]
+[assembly: AssemblyCopyright("Copyright ©  2022 Arnold Szathmary")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
