@@ -1,6 +1,8 @@
 using System;
 using System.Text.RegularExpressions;
-using fmt=GI.Formats.Formats;
+using System.Windows.Forms;
+using GI.Formats;
+using fmt=GI.Formats.PatternCategory;
 
 namespace GI
 {
@@ -46,26 +48,28 @@ namespace GI
 		{
 			_config = Config;
 			this.gIModule = gIModule;
-			Regex regexName = new Regex("Na=.*",RegexOptions.IgnoreCase);
-			variableName = regexName.Match(Config).Value.Substring(3).TrimEnd(new char[] {'\t','\r','\n'});
+            Regex regexName = new Regex($"{fmt.Starter("Na=")}{fmt.Any}{fmt.EndLine}", RegexOptions.IgnoreCase);
+			variableName = regexName.Match(Config).Value.Trim();
 
-            Regex regexType = new Regex("(?<=\\WDaDi=)(-?\\d*(\\.|,)?\\d*(E|e)?-?\\d{1,3})", RegexOptions.IgnoreCase);
-			dadi = int.Parse(regexType.Match(Config).Value);
+            Regex regexType = new Regex($"{fmt.Starter("DaDi=")}{fmt.WholeNumber}{fmt.EndLine}", RegexOptions.IgnoreCase);
+            string vv = regexType.Match(Config).Value.Trim();
+            dadi = int.Parse(regexType.Match(Config).Value.Trim());
 
-			Regex regxFactor = new Regex("(?<=\\WUnTrFa=)(-?\\d*(\\.|,)?\\d*(E|e)?-?\\d{1,3})", RegexOptions.IgnoreCase);
-			string s = regxFactor.Match(Config).Value;
-            cFaktor = fmt.GetDouble(s);
+            Regex regxFactor = new Regex($"{fmt.Starter("UnTrFa=")}{fmt.Double}{fmt.EndLine}", RegexOptions.IgnoreCase);
+			string s = regxFactor.Match(Config).Value.Trim();
+            cFaktor = GI.Formats.Formats.GetDouble(s);
 
-            Regex regxOffset = new Regex("(?<=\\WUnTrOf=)(-?\\d*(\\.|,)?\\d*(E|e)?-?\\d{1,3})", RegexOptions.IgnoreCase);
-            cOffset = fmt.GetDouble(regxOffset.Match(Config).Value);
+            Regex regxOffset = new Regex($"{fmt.Starter("UnTrOf=")}{fmt.Double}{fmt.EndLine}", RegexOptions.IgnoreCase);
+			string t = regxOffset.Match(Config).Value.Trim();
+            cOffset = GI.Formats.Formats.GetDouble(regxOffset.Match(Config).Value.Trim());
 
 			// #Summary.sta
 			Regex regxSection = new Regex("(?<=\\[).*(?=\\])");
 			string secname = regxSection.Match(_config).Value;
-			string summary_section = $"M{this.gIModule.ModuleNumberInConfig}_{secname}";
+			string summarySection = $"M{this.gIModule.ModuleNumberInConfig}_{secname}";
 			var df = GIGate.Instance.GIConfigFile("#summary.sta").Content;
 
-			Regex regexCF = new Regex(fmt.InitFormatSectionbuilder(summary_section), RegexOptions.IgnoreCase);
+			Regex regexCF = new Regex(fmt.InitFormatSectionbuilder(summarySection), RegexOptions.IgnoreCase);
 			var cf = regexCF.Match(df).Value;
 
 			Regex regexDataType = new Regex("(?<=\\WDataType=)(\\w{1,16})(?!\\w)");
@@ -90,15 +94,14 @@ namespace GI
             Regex regexOutSplitDataFieldOffs = new Regex("(?<=\\WOutSplitDataFieldOffs=)((0(x|X)|#)[0-9a-fA-F]{1,4})(?!\\w)");
             OutSplitDataFieldOffs = regexOutSplitDataFieldOffs.Match(cf).Value;
 
-            Regex regexOutCombDataFieldOffs = new Regex("(?<=\\WOutCombDataFieldOffs=)((0(x|X)|#)[0-9a-fA-F]{1,4})(?!\\w)");
+            //Regex regexOutCombDataFieldOffs = new Regex("(?<=\\WOutCombDataFieldOffs=)((0(x|X)|#)[0-9a-fA-F]{1,4})(?!\\w)");
+            //OutCombDataFieldOffs = regexInpCombDataFieldOffs.Match(cf).Value;
+
+            Regex regexOutCombDataFieldOffs = new Regex($"{fmt.Starter("OutCombDataFieldOffs=")}{fmt.Hexadecimal}{fmt.EndLine}");
             OutCombDataFieldOffs = regexInpCombDataFieldOffs.Match(cf).Value;
-
-
         }
 
-
-
-		public override string ToString()
+        public override string ToString()
 		{
 			return $"C:{variableName}";
 		}

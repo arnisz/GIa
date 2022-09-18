@@ -64,6 +64,7 @@
       <DependentUpon>Form1.cs</DependentUpon>
     </Compile>
     <Compile Include="GI\Formats\Formats.cs" />
+    <Compile Include="GI\Formats\PatternCategory.cs" />
     <Compile Include="GI\GIFile.cs" />
     <Compile Include="GI\GIChannel.cs" />
     <Compile Include="GI\GIGate.cs" />

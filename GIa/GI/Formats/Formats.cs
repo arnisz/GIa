@@ -24,10 +24,6 @@ namespace GI.Formats
 
         }
 
-        public static string InitFormatSectionbuilder(string Section)
-        {
-            return $"\\[{Section}\\].*(?:\\r?\\n\\s*[^\\]\\[\\s].*)+";
-        }
 
     }
 }

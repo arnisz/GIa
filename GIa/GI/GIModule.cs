@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using frm = GI.Formats.Formats;
 
 namespace GI
 {
@@ -60,7 +59,7 @@ namespace GI
 		{
 			if (!isInitialized)
 			{
-				Regex regxDevice = new Regex(frm.InitFormatSectionbuilder("Device"), RegexOptions.IgnoreCase);
+				Regex regxDevice = new Regex(GI.Formats.PatternCategory.InitFormatSectionbuilder("Device"), RegexOptions.IgnoreCase);
 				var device = regxDevice.Match(this.ConfigFile).Value;
 
 				Regex regxChannelsCount = new Regex("VCnt=\\d*");
@@ -71,7 +70,7 @@ namespace GI
 				gIChannels = new GIChannel[channelCount];
 				for (int i = 0; i < channelCount; i++)
 				{
-                    Regex regxV = new Regex(frm.InitFormatSectionbuilder($"V{i}"), RegexOptions.IgnoreCase);
+                    Regex regxV = new Regex(GI.Formats.PatternCategory.InitFormatSectionbuilder($"V{i}"), RegexOptions.IgnoreCase);
 					gIChannels[i] = new GIChannel(regxV.Match(this.ConfigFile).Value,this);
 					
                     //
@@ -82,7 +81,9 @@ namespace GI
 			isInitialized = true;
 		}
 
-
-
-	}
+        public override string ToString()
+        {
+            return $"{this.Adress}-{this.ModulType}-{this.SerialNumber}";
+        }
+    }
 }
