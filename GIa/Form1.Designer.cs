@@ -34,6 +34,9 @@
             this.button2 = new System.Windows.Forms.Button();
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.button3 = new System.Windows.Forms.Button();
+            this.button4 = new System.Windows.Forms.Button();
+            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.listBox2 = new System.Windows.Forms.ListBox();
             this.SuspendLayout();
             // 
             // textBox1
@@ -58,7 +61,7 @@
             // 
             this.listBox1.FormattingEnabled = true;
             this.listBox1.ItemHeight = 25;
-            this.listBox1.Location = new System.Drawing.Point(63, 142);
+            this.listBox1.Location = new System.Drawing.Point(264, 133);
             this.listBox1.Name = "listBox1";
             this.listBox1.Size = new System.Drawing.Size(497, 179);
             this.listBox1.TabIndex = 2;
@@ -68,7 +71,7 @@
             // button2
             // 
             this.button2.Enabled = false;
-            this.button2.Location = new System.Drawing.Point(566, 37);
+            this.button2.Location = new System.Drawing.Point(63, 133);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(195, 54);
             this.button2.TabIndex = 3;
@@ -78,7 +81,7 @@
             // 
             // textBox2
             // 
-            this.textBox2.Location = new System.Drawing.Point(566, 97);
+            this.textBox2.Location = new System.Drawing.Point(566, 49);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(195, 30);
             this.textBox2.TabIndex = 4;
@@ -87,7 +90,7 @@
             // button3
             // 
             this.button3.Enabled = false;
-            this.button3.Location = new System.Drawing.Point(566, 142);
+            this.button3.Location = new System.Drawing.Point(63, 241);
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(195, 71);
             this.button3.TabIndex = 5;
@@ -95,11 +98,42 @@
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click);
             // 
+            // button4
+            // 
+            this.button4.Location = new System.Drawing.Point(63, 625);
+            this.button4.Name = "button4";
+            this.button4.Size = new System.Drawing.Size(123, 47);
+            this.button4.TabIndex = 6;
+            this.button4.Text = "button4";
+            this.button4.UseVisualStyleBackColor = true;
+            this.button4.Click += new System.EventHandler(this.button4_Click);
+            // 
+            // textBox3
+            // 
+            this.textBox3.Location = new System.Drawing.Point(63, 678);
+            this.textBox3.Multiline = true;
+            this.textBox3.Name = "textBox3";
+            this.textBox3.Size = new System.Drawing.Size(698, 305);
+            this.textBox3.TabIndex = 7;
+            // 
+            // listBox2
+            // 
+            this.listBox2.FormattingEnabled = true;
+            this.listBox2.ItemHeight = 25;
+            this.listBox2.Location = new System.Drawing.Point(264, 319);
+            this.listBox2.Name = "listBox2";
+            this.listBox2.Size = new System.Drawing.Size(497, 354);
+            this.listBox2.TabIndex = 8;
+            this.listBox2.SelectedIndexChanged += new System.EventHandler(this.listBox2_SelectedIndexChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(807, 1064);
+            this.ClientSize = new System.Drawing.Size(820, 1064);
+            this.Controls.Add(this.listBox2);
+            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.button4);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.textBox2);
             this.Controls.Add(this.button2);
@@ -108,6 +142,8 @@
             this.Controls.Add(this.textBox1);
             this.Name = "Form1";
             this.Text = "Form1";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
+            this.Load += new System.EventHandler(this.Form1_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -121,6 +157,9 @@
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.Button button3;
+        private System.Windows.Forms.Button button4;
+        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.ListBox listBox2;
     }
 }
 

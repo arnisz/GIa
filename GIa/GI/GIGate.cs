@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using GI.Formats;
+using GantnerInstruments;
 
 namespace GI
 {
@@ -12,7 +12,7 @@ namespace GI
         public const string FtpUsername = "instrumentation4";
         public const string FtpPassword = "gantner";
     }
-    public class GIGate:IDisposable
+    public class GIGate : IDisposable
     {
         public int modulesCount;
         private bool _initialized = false;
@@ -51,6 +51,22 @@ namespace GI
         }
 
         #endregion
+
+        public GIChannel GetChannelByNumber(int Channelnumber)
+        {
+            foreach (var giModule in gIModules)
+            {
+                foreach (var VARIABLE in giModule.GetGIChannels)
+                {
+                    if (VARIABLE.AccessIndex==Channelnumber)
+                    {
+                        return VARIABLE;
+                    }
+                }
+            }
+
+            return null;
+        }
 
         public String IPAddress
         {
@@ -162,7 +178,7 @@ namespace GI
 
         public void Dispose()
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
         }
     }
 }
