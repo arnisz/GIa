@@ -1,5 +1,6 @@
 using System;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Windows.Forms;
 using GI.Formats;
 using fmt=GI.Formats.PatternCategory;
@@ -18,6 +19,7 @@ namespace GI
 		private int dadi;
 
         private int myChannelNumber = 0;
+        private string myIP = "";
 
         public int MyChannelNumber { get { return this.myChannelNumber;} private set {} }       
 
@@ -43,12 +45,21 @@ namespace GI
 
         public int AccessIndex { get; private set; }
 
+
+
         public double Meas 
         {
             get
             {
+                double value=0;
 
-                return 0;
+                //IniteGate();
+                GIGate.Instance.IniteGate();
+                Thread.Sleep(100);
+                HSP._CD_eGateHighSpeedPort_ReadOnline_Single(GIGate.Instance.HCONNECTION, this.MyChannelNumber, ref value);
+                double rv = value;
+                return rv;
+                
             } 
             private set{}
         }
@@ -65,8 +76,8 @@ namespace GI
 		public GIChannel(string Config, GIModule gIModule)
 		{
 			_config = Config;
+            this.gIModule = gIModule;
 
-			this.gIModule = gIModule;
             Regex regexName = new Regex($"{fmt.Starter("Na=")}{fmt.Any}{fmt.EndLine}", RegexOptions.IgnoreCase);
 			variableName = regexName.Match(Config).Value.Trim();
 

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using GantnerInstruments;
 using GI.Formats;
 
 namespace GI
@@ -12,7 +13,7 @@ namespace GI
         public const string FtpUsername = "instrumentation4";
         public const string FtpPassword = "gantner";
     }
-    public class GIGate
+    public class GIGate:IDisposable
     {
         public int modulesCount;
         private bool _initialized = false;
@@ -22,6 +23,10 @@ namespace GI
 
         private GIModule[] gIModules;
         private GIGatherer gIGatherer;
+        private int hcon = -1;
+        private int hcli = -1;
+
+        private bool gateinit = false;
 
         #region Sigleton
 
@@ -51,6 +56,25 @@ namespace GI
         }
 
         #endregion
+
+        public void IniteGate()
+        {
+            int ret = 0;
+            if (gateinit == false)
+            {
+                ret = HSP._CD_eGateHighSpeedPort_Init(this.IPAddress, 7, (int)HSP.CONNECTIONTYPE.Online, 100, ref this.HCLIENT,
+                    ref this.HCONNECTION);
+                gateinit = true;
+            }
+        }
+        public ref int HCONNECTION
+        {
+            get { return ref hcon; }
+        }
+        public ref int HCLIENT
+        {
+            get { return ref hcli; }
+        }
 
         public String IPAddress
         {
@@ -158,6 +182,16 @@ namespace GI
                 throw ex;
             }
 
+        }
+
+        public void Dispose()
+        {
+            int ret = 0;
+            if (gateinit == true)
+            {
+                ret = HSP._CD_eGateHighSpeedPort_Close(this.HCONNECTION, this.HCLIENT);
+                gateinit = false;
+            }
         }
 
     }
