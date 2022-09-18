@@ -121,7 +121,7 @@ namespace GIa
             string channels = "";
             foreach (GIChannel c in lbi.GetGIChannels)
             {
-                channels += $"Channel {c.VariableName} f:{c.Factor} o:{c.Offset} AI:{c.AccessIndex} Form:{c.DataFormat}\r";
+                channels += $"{c.MyChannelNumber} Channel {c.VariableName} f:{c.Factor} o:{c.Offset} AI:{c.AccessIndex} Form:{c.DataFormat}\r";
             }
             Console.WriteLine(channels);
         }

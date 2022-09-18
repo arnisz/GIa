@@ -13,6 +13,7 @@ namespace GI
 		private int channelCount;
 		private GIChannel[] gIChannels;
 		private bool isInitialized = false;
+        private int HCONNECTION = -1;
 
         //Module sollte wissen an welcher stelle es in Konfiguration vorkommt
 		//#summary.sta weist dem ersten Modul 0 zu. Reihenfolge Aufsteigend

@@ -3,6 +3,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using GI.Formats;
 using fmt=GI.Formats.PatternCategory;
+using GantnerInstruments;
 
 namespace GI
 {
@@ -15,6 +16,11 @@ namespace GI
 		private string _config;
         private GIModule gIModule;
 		private int dadi;
+
+        private int myChannelNumber = 0;
+
+        public int MyChannelNumber { get { return this.myChannelNumber;} private set {} }       
+
 
 		public string VariableName { get { return variableName; } private set { }}
 
@@ -37,6 +43,18 @@ namespace GI
 
         public int AccessIndex { get; private set; }
 
+        public double Meas 
+        {
+            get
+            {
+
+                return 0;
+            } 
+            private set{}
+        }
+
+
+
 
         public bool DataDirectionOut { get 
 			{
@@ -47,6 +65,7 @@ namespace GI
 		public GIChannel(string Config, GIModule gIModule)
 		{
 			_config = Config;
+
 			this.gIModule = gIModule;
             Regex regexName = new Regex($"{fmt.Starter("Na=")}{fmt.Any}{fmt.EndLine}", RegexOptions.IgnoreCase);
 			variableName = regexName.Match(Config).Value.Trim();
@@ -67,10 +86,24 @@ namespace GI
 			Regex regxSection = new Regex("(?<=\\[).*(?=\\])");
 			string secname = regxSection.Match(_config).Value;
 			string summarySection = $"M{this.gIModule.ModuleNumberInConfig}_{secname}";
-			var df = GIGate.Instance.GIConfigFile("#summary.sta").Content;
+			var summarySta = GIGate.Instance.GIConfigFile("#summary.sta").Content;
+            Regex regxChannelPositions = new Regex("(?<=\\W\\[M)\\d{1,2}_V\\d{1,2}");
+            var hits = regxChannelPositions.Matches(summarySta);
+            Console.WriteLine(hits.Count);
+            int countMatch = 0;
+            foreach (Match match in hits)
+            {
+                countMatch ++;
+                if (summarySection == "M"+match.Value)
+                {break;}
+                
+            }
+
+            myChannelNumber = countMatch;
+            Console.WriteLine(countMatch);
 
 			Regex regexCF = new Regex(fmt.InitFormatSectionbuilder(summarySection), RegexOptions.IgnoreCase);
-			var cf = regexCF.Match(df).Value;
+			var cf = regexCF.Match(summarySta).Value;
 
 			Regex regexDataType = new Regex("(?<=\\WDataType=)(\\w{1,16})(?!\\w)");
 			DataType = regexDataType.Match(cf).Value;
@@ -94,16 +127,13 @@ namespace GI
             Regex regexOutSplitDataFieldOffs = new Regex("(?<=\\WOutSplitDataFieldOffs=)((0(x|X)|#)[0-9a-fA-F]{1,4})(?!\\w)");
             OutSplitDataFieldOffs = regexOutSplitDataFieldOffs.Match(cf).Value;
 
-            //Regex regexOutCombDataFieldOffs = new Regex("(?<=\\WOutCombDataFieldOffs=)((0(x|X)|#)[0-9a-fA-F]{1,4})(?!\\w)");
-            //OutCombDataFieldOffs = regexInpCombDataFieldOffs.Match(cf).Value;
-
             Regex regexOutCombDataFieldOffs = new Regex($"{fmt.Starter("OutCombDataFieldOffs=")}{fmt.Hexadecimal}{fmt.EndLine}");
             OutCombDataFieldOffs = regexInpCombDataFieldOffs.Match(cf).Value;
         }
 
         public override string ToString()
 		{
-			return $"C:{variableName}";
+			return $"N:{this.myChannelNumber.ToString()} - C:{variableName}";
 		}
 	}
 }
