@@ -10,49 +10,49 @@ namespace GantnerInstruments
 {
 
 
-    public class eGateUtility
+    public class EGateUtility
     {
-        public enum NETWORKSCAN_INFO
+        public enum NetworkscanInfo
         {
             /*----------------- NetworkScan DeviceInfo ID's -----------------------------*/
-            DEVICE_ID = 1,
-            DEVICE_IsOperational = 2,
-            DEVICE_IsMaintainable = 3,
-            DEVICE_Location = 4,
-            DEVICE_SerialNumber = 5,
-            DEVICE_Firmware = 6,
-            DEVICE_TypeName = 7,
+            DeviceId = 1,
+            DeviceIsOperational = 2,
+            DeviceIsMaintainable = 3,
+            DeviceLocation = 4,
+            DeviceSerialNumber = 5,
+            DeviceFirmware = 6,
+            DeviceTypeName = 7,
             /*----------------- NetworkScan DeviceTypeInfo ID's -------------------------*/
-            DEVICE_Main = 8,
-            DEVICE_Sub = 9,
-            DEVICE_Function = 10,
-            DEVICE_Casing = 11,
-            DEVICE_MID = 12,
-            DEVICE_UniqueType = 13,
-            DEVICE_VendorName = 14,
-            DEVICE_SeriesName = 15,
+            DeviceMain = 8,
+            DeviceSub = 9,
+            DeviceFunction = 10,
+            DeviceCasing = 11,
+            DeviceMid = 12,
+            DeviceUniqueType = 13,
+            DeviceVendorName = 14,
+            DeviceSeriesName = 15,
             /*----------------- NetworkScan Networkinfo ID's ----------------------------*/
-            NETWORK_IPAddress_IPv4_Dynamic = 16,
-            NETWORK_IPAddress_IPv6_Dynamic = 17,
-            NETWORK_IPAddress_IPv4_Static = 18,
-            NETWORK_DHCP_Enabled = 19,
-            NETWORK_MACAddress = 20,
-            NETWORK_SubnetMask = 21,
-            NETWORK_GatewayAddress = 22
+            NetworkIpAddressIPv4Dynamic = 16,
+            NetworkIpAddressIPv6Dynamic = 17,
+            NetworkIpAddressIPv4Static = 18,
+            NetworkDhcpEnabled = 19,
+            NetworkMacAddress = 20,
+            NetworkSubnetMask = 21,
+            NetworkGatewayAddress = 22
         };
-        public enum NETWORKSCAN_TYPES
+        public enum NetworkscanTypes
         {
             /*----------------- NetworkScan ScanTypes  ----------------------------------*/
-            ScanType_IPv4_Broadcast = 0,
-            ScanType_IPv4_Multicast = 1, //-> Q.gate/pac (not Q.station) need to have FW version newer than 03.2020
-            ScanType_IPv6_Multicast = 2, //-> be sure to have activated IPv6 on your network adapter (only working for Q.stations)
-            ScanType_All = 3
+            ScanTypeIPv4Broadcast = 0,
+            ScanTypeIPv4Multicast = 1, //-> Q.gate/pac (not Q.station) need to have FW version newer than 03.2020
+            ScanTypeIPv6Multicast = 2, //-> be sure to have activated IPv6 on your network adapter (only working for Q.stations)
+            ScanTypeAll = 3
         };
 
 
 
         [DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int _CDDLG_IdentifyDevices_First(int useEXT,
+        public static extern int _CDDLG_IdentifyDevices_First(int useExt,
                                                                double scanTime,
                                                                byte[] adapterInfo,
                                                                byte[] deviceInfo,
@@ -155,7 +155,7 @@ namespace GantnerInstruments
          */
         [DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int _CDDLG_NetworkScan_GetDeviceInfo(  int index, 
-                                                                    int typeID,
+                                                                    int typeId,
                                                                     byte[] info);
 
         /******************************************************************************/
@@ -237,31 +237,31 @@ namespace GantnerInstruments
 
 
     }
-    public class HSP
+    public class Hsp
     {
-        public enum RETURNSTATES
+        public enum Returnstates
         {
-            OK=0,
-            ERROR=1,
-            CONNECTION_ERROR=2,
-            INIT_ERROR=3,
-            LIMIT_ERROR=4,
-            SYNC_CONF_ERROR=5,
-            MULTYUSED_ERROR=6,
-            INDEX_ERROR=7,
-            FILE_ERROR=8,
-            NOT_READY=9,
-            EXLIB_MISSING=10,
-            NOT_CONNECTED=11,
-            NO_FILE=12,
-            CORE_ERROR=13,
-            POINTER_INVALID=14,
-			NOT_IMPLEMENTED=15,
-			INVALID_TIMESTAMP=16,
-			COMPLETE=17
+            Ok=0,
+            Error=1,
+            ConnectionError=2,
+            InitError=3,
+            LimitError=4,
+            SyncConfError=5,
+            MultyusedError=6,
+            IndexError=7,
+            FileError=8,
+            NotReady=9,
+            ExlibMissing=10,
+            NotConnected=11,
+            NoFile=12,
+            CoreError=13,
+            PointerInvalid=14,
+			NotImplemented=15,
+			InvalidTimestamp=16,
+			Complete=17
 		};
 
-        public enum CHANNELINFO
+        public enum Channelinfo
         {
             Name=0,
             Unit=1,
@@ -277,7 +277,7 @@ namespace GantnerInstruments
             DaTyIndex = 34,  //Data Type Index
 			InputOffset = 35 //Input byte offset
         };
-        public enum DEVICEINFO
+        public enum Deviceinfo
         {
             //String
             Location=10,
@@ -291,30 +291,30 @@ namespace GantnerInstruments
             ModuleCount=17,
             ChannelCount=18,
 
-	        DEVICE_MID=50,
-            DEVICE_BUFFERCOUNT=51,
-	        DEVICE_LOGGERCOUNT=52,
-            DEVICE_TSTYPE=53,
-			DEVICE_DATAFRAMEWIDTH=54,
-			DEVICE_ENDIANNESS=55
+	        DeviceMid=50,
+            DeviceBuffercount=51,
+	        DeviceLoggercount=52,
+            DeviceTstype=53,
+			DeviceDataframewidth=54,
+			DeviceEndianness=55
         };
-        public enum MODULEINFO
+        public enum Moduleinfo
         {
             //String
             Type = 19,
             TypeCode = 20,
             Location = 21,
             //Integer
-            UARTIndex = 22,
+            UartIndex = 22,
             Address = 23,
             VariableCount = 24
         };
-        public enum STORAGEINFO
+        public enum Storageinfo
         {
-            STORE_FILECOUNT=25,
-            STORE_SECONDS=26
+            StoreFilecount=25,
+            StoreSeconds=26
         };
-        public enum DATADIRECTION
+        public enum Datadirection
         {
             Input = 0,         // = Input
             Output = 1,        // = Output
@@ -322,7 +322,7 @@ namespace GantnerInstruments
             Empty=3,         // = Empty
             Statistic=4	     // = Statistic Channels
         };
-        public enum CONNECTIONTYPE
+        public enum Connectiontype
         {
             Online=1,
             Buffer=2,
@@ -333,13 +333,13 @@ namespace GantnerInstruments
             PostProcessBuffer=8,
             Direct=7
         };
-        public enum STATISTICINFOTYPE
+        public enum Statisticinfotype
         {
             Connected=0,
             StackSize=1,
             DecodeTime=2
         };
-        public enum DIAGNOSTICTYPE
+        public enum Diagnostictype
         {
             Controller=0,
             Interface=1,
@@ -347,59 +347,59 @@ namespace GantnerInstruments
             Variable=3,
             ItemCount=4
         };
-        public enum STORAGETYPE
+        public enum Storagetype
         {
-            MDF=0,
-            CSV=1
+            Mdf=0,
+            Csv=1
         };
-        public enum DATATYPE
+        public enum Datatype
         {
             No=0,
             Bool=1,
-            SINT8=2,
-            USINT8=3,
-            SINT16=4,
-            USINT16=5,
-            SINT32=6,
-            USINT32=7,
-            FLOAT=8,
-            SET8=9,
-            SET16=10,
-            SET32=11,
-            DOUBLE=12,
-            SINT64=13,
-            USINT64=14,
-            SET64=15
+            Sint8=2,
+            Usint8=3,
+            Sint16=4,
+            Usint16=5,
+            Sint32=6,
+            Usint32=7,
+            Float=8,
+            Set8=9,
+            Set16=10,
+            Set32=11,
+            Double=12,
+            Sint64=13,
+            Usint64=14,
+            Set64=15
         };
-        public enum CALLBACKTYPE
+        public enum Callbacktype
         {
             Control = 0,
             Error = 1,
             Diagnostic = 2,
-            DSPData = 3,
+            DspData = 3,
             FReady = 4,
             Debug = 5
         };
-        public enum REMOTECONTROL
+        public enum Remotecontrol
         {
             Start = 0,
             Stop = 1,
             End = 2
         };
-        public enum FILETYPE
+        public enum Filetype
         {
-            DIR_ALL=0,
-            FLASHAPPLICATION=1,
-            FLASHDATA=2,
-            USBDATA=3,
-            VIRTUALSTATE=4,
-            VIRTUALONLINEBUFFER=5,
-            VIRTUALCIRCLEBUFFER=6,
-            VIRTUALARCHIVE=7,
-            VIRTUALLOGGER=8,
-			FILE_IDENTIFY_BY_PATH=10
+            DirAll=0,
+            Flashapplication=1,
+            Flashdata=2,
+            Usbdata=3,
+            Virtualstate=4,
+            Virtualonlinebuffer=5,
+            Virtualcirclebuffer=6,
+            Virtualarchive=7,
+            Virtuallogger=8,
+			FileIdentifyByPath=10
         };
-        public enum VARIABLEKIND
+        public enum Variablekind
         {
             VarKindEmpty = 0,
             VarKindAnalogOutput = 1, 
@@ -409,7 +409,7 @@ namespace GantnerInstruments
             VarKindArithmetic = 5,
             VarKindSetpoint = 6,
             VarKindAlarm = 7,
-            VarKindPIDController = 8,
+            VarKindPidController = 8,
             VarKindSignalConditioning = 9,
             VarKindRemote = 10,
             VarKindReference = 11,
@@ -465,8 +465,8 @@ namespace GantnerInstruments
                                                               int timeout,
                                                               int mode,
                                                               int sampleRate,
-                                                              ref int HCLIENT,
-                                                              ref int HCONNECTION);
+                                                              ref int hclient,
+                                                              ref int hconnection);
 
         /****************************************************************************************/
 		
@@ -506,8 +506,8 @@ namespace GantnerInstruments
 
         [DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int _CD_eGateHighSpeedPort_GetPostProcessBufferInfo(UInt32 bufferIndex,
-                                                                                 byte[] bufferID,
-                                                                                int bufferIDLen,
+                                                                                 byte[] bufferId,
+                                                                                int bufferIdLen,
                                                                                 byte[] bufferName,
                                                                                 int bufferNameLen);
 		/****************************************************************************************/
@@ -516,7 +516,7 @@ namespace GantnerInstruments
         /************		Initialize connection to PostProcess buffer
         */
         [DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int _CD_eGateHighSpeedPort_Init_PostProcessBuffer(string BufferID,
+        public static extern int _CD_eGateHighSpeedPort_Init_PostProcessBuffer(string bufferId,
 														        ref int clientInstance,
 														        ref int connectionInstance);
 
@@ -552,7 +552,7 @@ namespace GantnerInstruments
          * @return General return codes
          */
         [DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int _CD_eGateHighSpeedPort_PostProcessBufferServer_Create( string sourceID,
+        public static extern int _CD_eGateHighSpeedPort_PostProcessBufferServer_Create( string sourceId,
                                                                                         string sourceName,
                                                                                         double sampleRateHz,
                                                                                         UInt64 bufferSizeByte,
@@ -588,7 +588,7 @@ namespace GantnerInstruments
          */
         [DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int _CD_eGateHighSpeedPort_PostProcessBufferServer_CreateUDBFFileBuffer(string fullFilePath,
-                                                                                                     string  sourceID,
+                                                                                                     string  sourceId,
                                                                                                      string  sourceName,
                                                                                                      double  sampleRateHz,
                                                                                                      UInt64  maxLengthSeconds,
@@ -617,7 +617,7 @@ namespace GantnerInstruments
          */   
         [DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int _CD_eGateHighSpeedPort_PostProcessBufferServer_AddVariableDefinition(  int bufferHandle,
-                                                                                                        string variableID,
+                                                                                                        string variableId,
                                                                                                         string variableName,
                                                                                                         string Unit,
                                                                                                         int DataTypeCode,
@@ -908,7 +908,7 @@ namespace GantnerInstruments
 		*/
 		[DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int _CD_eGateHighSpeedPort_GetNumberOfChannels(int ConnectionInstance, 
-															               int directionID,
+															               int directionId,
                                                                            ref int ChannelCount);
 		/****************************************************************************************/
 		
@@ -942,7 +942,7 @@ namespace GantnerInstruments
 		*/
         [DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int _CD_eGateHighSpeedPort_GetDeviceInfo(int ConnectionInstance,
-                                                              int typeID,
+                                                              int typeId,
                                                               int index,
                                                               ref double info,
                                                               byte[] Info);
@@ -984,8 +984,8 @@ namespace GantnerInstruments
 		*/
 		[DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int _CD_eGateHighSpeedPort_GetChannelInfo_String(int ConnectionInstance,
-																				 int typeID,
-																				 int directionID,
+																				 int typeId,
+																				 int directionId,
 																				 int channelIndex,
 																				 byte[] channelInfo);
 		/****************************************************************************************/
@@ -1023,8 +1023,8 @@ namespace GantnerInstruments
 		*/	
        [DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
        public static extern int _CD_eGateHighSpeedPort_GetChannelInfo_Int(int ConnectionInstance,
-                                                                             int typeID,
-                                                                             int directionID,
+                                                                             int typeId,
+                                                                             int directionId,
                                                                              int channelIndex,
                                                                              ref int channelInfo);
 		/****************************************************************************************/
@@ -1053,7 +1053,7 @@ namespace GantnerInstruments
 		*/		
         [DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int _CD_eGateHighSpeedPort_ReadOnline_Single(int connectionInstance,
-                                                                          int HWChannelIndex,
+                                                                          int hwChannelIndex,
                                                                           ref double value);
 		/****************************************************************************************/
 		
@@ -1224,7 +1224,7 @@ namespace GantnerInstruments
         
         */
         [DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int _CD_eGateHighSpeedPort_InitBuffer(int HCONNECTION,
+        public static extern int _CD_eGateHighSpeedPort_InitBuffer(int hconnection,
                                                                     int bufferIndex,
                                                                     int autoRun);
 		/****************************************************************************************/
@@ -1253,8 +1253,8 @@ namespace GantnerInstruments
         [DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int _CD_eGateHighSpeedPort_GetTimeRange(int connectionInstance,
 														                  int clientInstance,
-														                  ref UInt64 startTimeDC,
-                                                                          ref UInt64 endTimeDC);
+														                  ref UInt64 startTimeDc,
+                                                                          ref UInt64 endTimeDc);
 		/****************************************************************************************/
 				
 		/****************************************************************************************/
@@ -1565,8 +1565,8 @@ namespace GantnerInstruments
 		*/
 		[DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
 		public static extern int _CD_eGateHighSpeedPort_ReadBuffer_SetTimeRange(int ConnectionInstance,
-																				UInt64 StartTimeDC,
-																				UInt64 EndTimeDC);
+																				UInt64 startTimeDc,
+																				UInt64 endTimeDc);
 
 		/****************************************************************************************/
 
@@ -1608,8 +1608,8 @@ namespace GantnerInstruments
 		/************		DLL Version/Date													
 		*/		
         [DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void _CD_eGateHighSpeedPort_IdentDLL(byte[] DLLVersion,
-                                                                 byte[] DLLDate);
+        public static extern void _CD_eGateHighSpeedPort_IdentDLL(byte[] dllVersion,
+                                                                 byte[] dllDate);
 																 
 		[DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int _CD_eGateHighSpeedPort_ToggleDebugMode();
@@ -1708,7 +1708,7 @@ namespace GantnerInstruments
 			It can be used to send commands to every process that uses the DLL
 		*/		
 		[DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern void _CD_eGateHighSpeedPort_RemoteControl(int remoteControlID);
+        public static extern void _CD_eGateHighSpeedPort_RemoteControl(int remoteControlId);
 		/****************************************************************************************/
 		
 		
@@ -1756,7 +1756,7 @@ namespace GantnerInstruments
 		*/
         [DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern int _CD_eGateHighSpeedPort_GetFileCount(int ConnectionInstance,
-                                                                        int fileTypeID,
+                                                                        int fileTypeId,
                                                                         string filePath,
                                                                         ref int fileCount);
 		/****************************************************************************************/
@@ -1793,7 +1793,7 @@ namespace GantnerInstruments
                                                                     byte[] fileIdent,
                                                                     int fileIdentLen,
                                                                     ref int size,
-                                                                    ref double OLETime);
+                                                                    ref double oleTime);
 		/****************************************************************************************/
 
 		/****************************************************************************************/
@@ -1887,7 +1887,7 @@ namespace GantnerInstruments
 
 		*/
 		[DllImport("giutility.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int _CD_eGateHighSpeedPort_SleepMS(int time_msec);
+        public static extern int _CD_eGateHighSpeedPort_SleepMS(int timeMsec);
 		/****************************************************************************************/										
 																	
     }
@@ -1898,7 +1898,7 @@ namespace GantnerInstruments
 		public static extern UInt64 ga_GetDCTimeNSFromEpochTimeMs(ref UInt64 EpochTimeMs, bool FullSeconds);
 
 		[DllImport("giutility.dll", CallingConvention = CallingConvention.StdCall)]
-		public static extern UInt64 ga_GetDCTimeNSFromOLETime(ref Double OLETime);
+		public static extern UInt64 ga_GetDCTimeNSFromOLETime(ref Double oleTime);
 
 		[DllImport("giutility.dll", CallingConvention = CallingConvention.StdCall)]
 		public static extern UInt64 ga_GetEpochTimeMsFromDCTime_NS(ref UInt64 AbsTime);
@@ -1915,12 +1915,12 @@ namespace GantnerInstruments
         public static void ConvertZeroTerminatedByteArray2String(out string Destination, byte[] Source) // -
         {
             int i,
-                    MaxIndex;
+                    maxIndex;
 
-            MaxIndex = Source.GetUpperBound(0);
+            maxIndex = Source.GetUpperBound(0);
             Destination = "";
             i = Source.GetLowerBound(0);
-            while ((Source[i] != 0) && (i <= MaxIndex))
+            while ((Source[i] != 0) && (i <= maxIndex))
             {
                 Destination += (char)Source[i];
                 i++;
@@ -1930,17 +1930,17 @@ namespace GantnerInstruments
 
         public static void ConvertString2ZeroTerminatedByteArray(byte[] Destination, string Source) // -
         {
-            bool Term;
+            bool term;
             int i,
                     a,
-                    MaxIndex;
+                    maxIndex;
 
-            MaxIndex = Destination.GetUpperBound(0);
+            maxIndex = Destination.GetUpperBound(0);
             i = Destination.GetLowerBound(0);
             Destination[i] = 0;
             a = 0;
-            Term = false;
-            while ((i < MaxIndex) && (a < Source.Length) && !Term)
+            term = false;
+            while ((i < maxIndex) && (a < Source.Length) && !term)
             {
                 if (Source[a] != 0)
                 {
@@ -1949,7 +1949,7 @@ namespace GantnerInstruments
                     a++;
                 }
                 else
-                    Term = true;
+                    term = true;
             }
             Destination[i] = 0;
         }

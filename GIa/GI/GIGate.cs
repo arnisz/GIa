@@ -12,55 +12,55 @@ namespace GI
         public const string FtpUsername = "instrumentation4";
         public const string FtpPassword = "gantner";
     }
-    public class GIGate : IDisposable
+    public class GiGate : IDisposable
     {
-        public int modulesCount;
+        public int ModulesCount;
         private bool _initialized = false;
-        private String ipAddress;
-        private String serialNumber;
-        private List<GIFile> liGIFiles;
+        private String _ipAddress;
+        private String _serialNumber;
+        private List<GiFile> _liGiFiles;
 
-        private GIModule[] gIModules;
-        private GIGatherer gIGatherer;
+        private GiModule[] _gIModules;
+        private GiGatherer _gIGatherer;
 
         #region Sigleton
 
-        private static GIGate g = null;
-        private static readonly object padlock = new object();
+        private static GiGate _g = null;
+        private static readonly object Padlock = new object();
 
-        GIGate()
+        GiGate()
         {
-            ipAddress = GIGatherer.Instance.IPAddress;
+            _ipAddress = GiGatherer.Instance.IpAddress;
         }
-        private DateTime myTime;
+        private DateTime _myTime;
 
-        public static GIGate Instance
+        public static GiGate Instance
         {
             get
             {
-                lock (padlock)
+                lock (Padlock)
                 {
-                    if (g == null)
+                    if (_g == null)
                     {
-                        g = new GIGate();
-                        g.myTime = DateTime.Now;
+                        _g = new GiGate();
+                        _g._myTime = DateTime.Now;
                     }
-                    return g;
+                    return _g;
                 }
             }
         }
 
         #endregion
 
-        public GIChannel GetChannelByNumber(int Channelnumber)
+        public GiChannel GetChannelByNumber(int Channelnumber)
         {
-            foreach (var giModule in gIModules)
+            foreach (var giModule in _gIModules)
             {
-                foreach (var VARIABLE in giModule.GetGIChannels)
+                foreach (var variable in giModule.GetGiChannels)
                 {
-                    if (VARIABLE.AccessIndex==Channelnumber)
+                    if (variable.AccessIndex==Channelnumber)
                     {
-                        return VARIABLE;
+                        return variable;
                     }
                 }
             }
@@ -68,34 +68,34 @@ namespace GI
             return null;
         }
 
-        public String IPAddress
+        public String IpAddress
         {
             get
             {
-                return ipAddress;
+                return _ipAddress;
             }
             set
             {
-                ipAddress = value;
+                _ipAddress = value;
             }
         }
 
-        public GIFile GIConfigFile(string Filename)
+        public GiFile GiConfigFile(string Filename)
         {
-            return liGIFiles.Find(x => x.Filename == Filename);
+            return _liGiFiles.Find(x => x.Filename == Filename);
         }
 
-        public ref List<GIFile> GIConfigfilesList()
+        public ref List<GiFile> GiConfigfilesList()
         {
-            return ref liGIFiles;
+            return ref _liGiFiles;
         }
 
-        public List<GIModule> ListModules()
+        public List<GiModule> ListModules()
         {
-            List<GIModule> modules = new List<GIModule>();
+            List<GiModule> modules = new List<GiModule>();
             try
             {
-                foreach (GIModule module in gIModules)
+                foreach (GiModule module in _gIModules)
                     if (module == null) { }
                     else
                     {
@@ -109,7 +109,7 @@ namespace GI
             }
         }
 
-        public bool isInitialized { get { return _initialized; } private set { } }
+        public bool IsInitialized { get { return _initialized; } private set { } }
 
         //initialize Modules
         //Moduldaten werden in die Modulobjekte übertragen
@@ -120,14 +120,14 @@ namespace GI
             {
                 if (!_initialized)
                 {
-                    if (ipAddress == null)
+                    if (_ipAddress == null)
                     {
-                        ipAddress = GIGatherer.Instance.IPAddress;
+                        _ipAddress = GiGatherer.Instance.IpAddress;
                     }
-                    GIGatherer.Instance.SetIP(ipAddress);
-                    liGIFiles = await GIGatherer.Instance.GetFileInformations(Progress);
-                    var actual = liGIFiles.Find(x => x.Filename == "#actual.sta");
-                    var summary = liGIFiles.Find(x => x.Filename == "#summary.sta");
+                    GiGatherer.Instance.SetIp(_ipAddress);
+                    _liGiFiles = await GiGatherer.Instance.GetFileInformations(Progress);
+                    var actual = _liGiFiles.Find(x => x.Filename == "#actual.sta");
+                    var summary = _liGiFiles.Find(x => x.Filename == "#summary.sta");
 
                     //Module Informationen
                     Regex regexLine = new Regex("TS:\\d.*STA-");
@@ -137,32 +137,32 @@ namespace GI
                     Regex regexUart = new Regex("DEV:.UART\\d*");
 
                     var modulelines = regexLine.Matches(actual.Content);
-                    modulesCount = modulelines.Count;
-                    gIModules = new GIModule[modulesCount];
+                    ModulesCount = modulelines.Count;
+                    _gIModules = new GiModule[ModulesCount];
 
-                    int _mcount = 0;
+                    int mcount = 0;
                     foreach (Match i in modulelines)
                     {
                         string item = i.Value;
-                        gIModules[_mcount] = new GIModule(_mcount);
+                        _gIModules[mcount] = new GiModule(mcount);
 
                         int adr = int.Parse(regexAdress.Match(item).Value.Substring(3));
-                        gIModules[_mcount].Adress = adr;
+                        _gIModules[mcount].Adress = adr;
 
                         string m = regexType.Match(item).Value;
-                        gIModules[_mcount].ModulType = m.Substring(3).TrimEnd(new char[] { '\t', '\r', '\n' });
+                        _gIModules[mcount].ModulType = m.Substring(3).TrimEnd(new char[] { '\t', '\r', '\n' });
 
                         string sr = regexSerial.Match(item).Value.Substring(4);
                         long n = long.Parse(sr);
-                        gIModules[_mcount].SerialNumber = n;
+                        _gIModules[mcount].SerialNumber = n;
 
                         string su = regexUart.Match(item).Value.Substring(9);
                         int v = int.Parse(su);
-                        gIModules[_mcount].Uart = v;
+                        _gIModules[mcount].Uart = v;
 
-                        gIModules[_mcount].ConfigFile = liGIFiles.Find(x => x.Filename == $"@{v}_{adr}_c.gcf").Content;
+                        _gIModules[mcount].ConfigFile = _liGiFiles.Find(x => x.Filename == $"@{v}_{adr}_c.gcf").Content;
 
-                        _mcount++;
+                        mcount++;
                     }
 
                     _initialized = true;

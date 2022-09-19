@@ -7,43 +7,43 @@ using System.Threading.Tasks;
 
 namespace GI
 {
-	public class GIModule
+	public class GiModule
 	{
-		private string modulType;
-		private int channelCount;
-		private GIChannel[] gIChannels;
-		private bool isInitialized = false;
-        private int HCONNECTION = -1;
+		private string _modulType;
+		private int _channelCount;
+		private GiChannel[] _gIChannels;
+		private bool _isInitialized = false;
+        private int _hconnection = -1;
 
         //Module sollte wissen an welcher stelle es in Konfiguration vorkommt
 		//#summary.sta weist dem ersten Modul 0 zu. Reihenfolge Aufsteigend
-        private int moduleNumberinConfig;
+        private int _moduleNumberinConfig;
 
-		private GIGate gIGate;
+		private GiGate _gIGate;
 
 		
 
-		public GIModule(int ModuleinConfig)
+		public GiModule(int ModuleinConfig)
 		{
-			this.moduleNumberinConfig = ModuleinConfig;
-			gIGate = GIGate.Instance;
+			this._moduleNumberinConfig = ModuleinConfig;
+			_gIGate = GiGate.Instance;
 		}
 
-		public int ModuleNumberInConfig { get { return moduleNumberinConfig; } private set { } }	
+		public int ModuleNumberInConfig { get { return _moduleNumberinConfig; } private set { } }	
 
 		public int Adress { get; set; }
 		public string ModulType { get; set; }
 
 		public long SerialNumber { get; set; }
 
-		public List<GIChannel> GetGIChannels {
+		public List<GiChannel> GetGiChannels {
 			get 
 			{
-				if (!isInitialized)
+				if (!_isInitialized)
 				{
 					Initialize();
 				}
-				return gIChannels.ToList();
+				return _gIChannels.ToList();
 			}
 			set
 			{}
@@ -51,14 +51,14 @@ namespace GI
 
 		public int Uart { get; set; }
 
-		public int ChannelsNumber { get { return this.channelCount; } private set { } }
+		public int ChannelsNumber { get { return this._channelCount; } private set { } }
 		public string ConfigFile { get; set; }
 
 		// INIT Channels
 		// Kanaldaten werden in die Kanalobjekte Übertragen
 		public async Task Initialize()
 		{
-			if (!isInitialized)
+			if (!_isInitialized)
 			{
 				Regex regxDevice = new Regex(GI.Formats.PatternCategory.InitFormatSectionbuilder("Device"), RegexOptions.IgnoreCase);
 				var device = regxDevice.Match(this.ConfigFile).Value;
@@ -66,20 +66,20 @@ namespace GI
 				Regex regxChannelsCount = new Regex("VCnt=\\d*");
 				string scc = regxChannelsCount.Match(device).Value.Substring(5);
 
-				this.channelCount = int.Parse(scc);
+				this._channelCount = int.Parse(scc);
 
-				gIChannels = new GIChannel[channelCount];
-				for (int i = 0; i < channelCount; i++)
+				_gIChannels = new GiChannel[_channelCount];
+				for (int i = 0; i < _channelCount; i++)
 				{
                     Regex regxV = new Regex(GI.Formats.PatternCategory.InitFormatSectionbuilder($"V{i}"), RegexOptions.IgnoreCase);
-					gIChannels[i] = new GIChannel(regxV.Match(this.ConfigFile).Value,this);
+					_gIChannels[i] = new GiChannel(regxV.Match(this.ConfigFile).Value,this);
 					
                     //
                 }
 
 			}
 
-			isInitialized = true;
+			_isInitialized = true;
 		}
 
         public override string ToString()

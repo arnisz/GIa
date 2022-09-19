@@ -7,20 +7,20 @@ using System.Windows.Forms;
 
 namespace GI
 {
-    public partial class GIGatherer
+    public partial class GiGatherer
     {
 
         protected static class Myftp
         {
-            private static FtpClient ftpClient;
+            private static FtpClient _ftpClient;
 
 
             public static FtpClient GetClient(string Host)
             {
                 try
                 {
-                    ftpClient = new FtpClient(Host, FtpCredentials.FtpUsername, FtpCredentials.FtpPassword, 21);
-                    return ftpClient;
+                    _ftpClient = new FtpClient(Host, FtpCredentials.FtpUsername, FtpCredentials.FtpPassword, 21);
+                    return _ftpClient;
                 }
                 catch (Exception ex)
                 {
@@ -34,14 +34,14 @@ namespace GI
 
             public static void Connect()
             {
-                if (ftpClient != null)
+                if (_ftpClient != null)
                 {
-                    if (!ftpClient.IsConnected)
+                    if (!_ftpClient.IsConnected)
                     {
                         try
                         {
-                            ftpClient.Connect();
-                            var s = ftpClient.Status;
+                            _ftpClient.Connect();
+                            var s = _ftpClient.Status;
                         } catch (Exception ex)
                         {
                             MessageBox.Show(ex.Message);
@@ -54,20 +54,20 @@ namespace GI
 
             public static void Disconnect()
             {
-                if (ftpClient.IsConnected)
+                if (_ftpClient.IsConnected)
                 {
-                    ftpClient.Disconnect();
+                    _ftpClient.Disconnect();
                 }
             }
 
-            public static List<GIFile> GetFTPDirectory(string path)
+            public static List<GiFile> GetFtpDirectory(string path)
             {
-                List<GIFile> ftpDirectory = new List<GIFile>();
+                List<GiFile> ftpDirectory = new List<GiFile>();
                 Connect();
-                FtpListItem[] v = ftpClient.GetListing("/");
+                FtpListItem[] v = _ftpClient.GetListing("/");
                 foreach (var f in v)
                 {
-                    GIFile file = new GIFile(f.Name);
+                    GiFile file = new GiFile(f.Name);
                     file.Size = f.Size;
 
                     ftpDirectory.Add(file);

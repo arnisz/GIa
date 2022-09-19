@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace GI
+﻿namespace GI
 {
-    public class GIFile
+    public class GiFile
     {
         private string _name;
         private string _content;
 
-        public GIFile (string Name)
+        public GiFile(string Name)
         {
             _name = Name;
         }

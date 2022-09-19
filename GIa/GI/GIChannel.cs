@@ -1,30 +1,27 @@
-using System;
 using System.Text.RegularExpressions;
-using System.Windows.Forms;
-using GI.Formats;
-using fmt=GI.Formats.PatternCategory;
+using fmt = GI.Formats.PatternCategory;
 
 
 namespace GI
 {
 
-	public class GIChannel
-	{
-		private double cFaktor;
-		private double cOffset;
-		private string variableName;
-		private string _config;
-        private GIModule gIModule;
-		private int dadi;
+    public class GiChannel
+    {
+        private double _cFaktor;
+        private double _cOffset;
+        private string _variableName;
+        private string _config;
+        private GiModule _gIModule;
+        private int _dadi;
 
-		public string VariableName { get { return variableName; } private set { }}
+        public string VariableName { get { return _variableName; } private set { _variableName = value; } }
 
-		public double Factor { get { return cFaktor; } private set { } }
-        public double Offset { get { return cOffset; } private set { } }
+        public double Factor { get { return _cFaktor; } private set { _cFaktor = value; } }
+        public double Offset { get { return _cOffset; } private set { _cFaktor = value; } }
 
-		public string DataType { get; private set; }
+        public string DataType { get; private set; }
 
-		public string DataFormat { get; private set; }
+        public string DataFormat { get; private set; }
 
         public string DataDirectionA { get; private set; }
 
@@ -38,72 +35,53 @@ namespace GI
 
         public int AccessIndex { get; private set; }
 
-        public double Meas 
+        public double Meas
         {
             get
             {
 
                 return 0;
-            } 
-            private set{}
+            }
+            private set { _cFaktor = value; }
         }
 
 
 
 
-        public bool DataDirectionOut { get 
-			{
-				return (dadi != 0); 
-			} private set { } }
+        public bool DataDirectionOut => (_dadi != 0);
 
 
-		public GIChannel(string Config, GIModule gIModule)
-		{
-			_config = Config;
+        public GiChannel(string Config, GiModule gIModule)
+        {
+            _config = Config;
 
-			this.gIModule = gIModule;
+            _gIModule = gIModule;
             Regex regexName = new Regex($"{fmt.Starter("Na=")}{fmt.Any}{fmt.EndLine}", RegexOptions.IgnoreCase);
-			variableName = regexName.Match(Config).Value.Trim();
+            _variableName = regexName.Match(Config).Value.Trim();
 
             Regex regexType = new Regex($"{fmt.Starter("DaDi=")}{fmt.WholeNumber}{fmt.EndLine}", RegexOptions.IgnoreCase);
-            string vv = regexType.Match(Config).Value.Trim();
-            dadi = int.Parse(regexType.Match(Config).Value.Trim());
+            _dadi = int.Parse(regexType.Match(Config).Value.Trim());
 
             Regex regxFactor = new Regex($"{fmt.Starter("UnTrFa=")}{fmt.Double}{fmt.EndLine}", RegexOptions.IgnoreCase);
-			string s = regxFactor.Match(Config).Value.Trim();
-            cFaktor = GI.Formats.Formats.GetDouble(s);
+            string s = regxFactor.Match(Config).Value.Trim();
+            _cFaktor = Formats.Formats.GetDouble(s);
 
             Regex regxOffset = new Regex($"{fmt.Starter("UnTrOf=")}{fmt.Double}{fmt.EndLine}", RegexOptions.IgnoreCase);
-			string t = regxOffset.Match(Config).Value.Trim();
-            cOffset = GI.Formats.Formats.GetDouble(regxOffset.Match(Config).Value.Trim());
+            _cOffset = Formats.Formats.GetDouble(regxOffset.Match(Config).Value.Trim());
 
-			// #Summary.sta
-			Regex regxSection = new Regex("(?<=\\[).*(?=\\])");
-			string secname = regxSection.Match(_config).Value;
-			string summarySection = $"M{this.gIModule.ModuleNumberInConfig}_{secname}";
-			var summarySta = GIGate.Instance.GIConfigFile("#summary.sta").Content;
+            // #Summary.sta
+            Regex regxSection = new Regex("(?<=\\[).*(?=\\])");
+            string secname = regxSection.Match(_config).Value;
+            string summarySection = $"M{_gIModule.ModuleNumberInConfig}_{secname}";
+            var summarySta = GiGate.Instance.GiConfigFile("#summary.sta").Content;
             Regex regxChannelPositions = new Regex("(?<=\\W\\[M)\\d{1,2}_V\\d{1,2}");
-            var hits = regxChannelPositions.Matches(summarySta);
-            /*
-            Console.WriteLine(hits.Count);
-            int countMatch = 0;
-            foreach (Match match in hits)
-            {
-                countMatch ++;
-                if (summarySection == "M"+match.Value)
-                {break;}
-                
-            }
+            regxChannelPositions.Matches(summarySta);
 
-            myChannelNumber = countMatch;
-            Console.WriteLine(countMatch);
-            */
+            Regex regexCf = new Regex(fmt.InitFormatSectionbuilder(summarySection), RegexOptions.IgnoreCase);
+            var cf = regexCf.Match(summarySta).Value;
 
-			Regex regexCF = new Regex(fmt.InitFormatSectionbuilder(summarySection), RegexOptions.IgnoreCase);
-			var cf = regexCF.Match(summarySta).Value;
-
-			Regex regexDataType = new Regex("(?<=\\WDataType=)(\\w{1,16})(?!\\w)");
-			DataType = regexDataType.Match(cf).Value;
+            Regex regexDataType = new Regex("(?<=\\WDataType=)(\\w{1,16})(?!\\w)");
+            DataType = regexDataType.Match(cf).Value;
 
             Regex regexDataFormat = new Regex("(?<=\\WFormat=)(%?\\d*\\.?\\d*f?)(?!\\w)");
             DataFormat = regexDataFormat.Match(cf).Value;
@@ -111,26 +89,26 @@ namespace GI
             Regex regexDataDirectionA = new Regex("(?<=\\WDataDirection=)(.{1,4})(?!\\w)");
             DataDirectionA = regexDataDirectionA.Match(cf).Value.Trim();
 
-            Regex regexInpSplitDataFieldOffs = new Regex("(?<=\\WInpSplitDataFieldOffs=)((0(x|X)|#)[0-9a-fA-F]{1,4})(?!\\w)");
+            Regex regexInpSplitDataFieldOffs = new Regex($"{fmt.Starter("InpSplitDataFieldOffs=")}{fmt.Hexadecimal}{fmt.EndLine}");
             InpSplitDataFieldOffs = regexInpSplitDataFieldOffs.Match(cf).Value;
 
-            Regex regexInpCombDataFieldOffs = new Regex("(?<=\\WInpCombDataFieldOffs=)((0(x|X)|#)[0-9a-fA-F]{1,4})(?!\\w)");
+            Regex regexInpCombDataFieldOffs = new Regex($"{fmt.Starter("InpCombDataFieldOffs=")}{fmt.Hexadecimal}{fmt.EndLine}");
             InpCombDataFieldOffs = regexInpCombDataFieldOffs.Match(cf).Value;
 
-            Regex regexAccessindex = new Regex("(?<=\\WAccessIndex=)(-?\\d{1,4})(?!\\w)");
-			string ai = regexAccessindex.Match(cf).Value;
+            Regex regexAccessindex = new Regex($"{fmt.Starter("AccessIndex=")}{fmt.WholeNumber}{fmt.EndLine}");
+            string ai = regexAccessindex.Match(cf).Value;
             AccessIndex = int.Parse(ai);
 
-            Regex regexOutSplitDataFieldOffs = new Regex("(?<=\\WOutSplitDataFieldOffs=)((0(x|X)|#)[0-9a-fA-F]{1,4})(?!\\w)");
+            Regex regexOutSplitDataFieldOffs = new Regex($"{fmt.Starter("OutSplitDataFieldOffs=")}{fmt.Hexadecimal}{fmt.EndLine}");
             OutSplitDataFieldOffs = regexOutSplitDataFieldOffs.Match(cf).Value;
 
-            Regex regexOutCombDataFieldOffs = new Regex($"{fmt.Starter("OutCombDataFieldOffs=")}{fmt.Hexadecimal}{fmt.EndLine}");
-            OutCombDataFieldOffs = regexInpCombDataFieldOffs.Match(cf).Value;
+            Regex regOutCombDataFieldOffs = new Regex($"{fmt.Starter("OutCombDataFieldOffs=")}{fmt.Hexadecimal}{fmt.EndLine}");
+            OutCombDataFieldOffs = regOutCombDataFieldOffs.Match(cf).Value;
         }
 
         public override string ToString()
-		{
-			return $"C:{variableName} Zugriffsnummer:{AccessIndex}";
-		}
-	}
+        {
+            return $"C:{_variableName} Zugriffsnummer:{AccessIndex}";
+        }
+    }
 }

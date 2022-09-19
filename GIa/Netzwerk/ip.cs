@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace GIa.Netzwerk
 {
-    internal class ip
+    internal class Ip
     {
-        public static bool IsValidIPAdress (string IPAddress)
+        public static bool IsValidIpAdress (string ipAddress)
         {
-            Regex regxValidateIP = new Regex("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
-            return regxValidateIP.IsMatch (IPAddress);
+            Regex regxValidateIp = new Regex("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
+            return regxValidateIp.IsMatch (ipAddress);
         }
     }
 }
