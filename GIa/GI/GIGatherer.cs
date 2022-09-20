@@ -2,6 +2,7 @@ using FluentFTP;
 using FluentFTP.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -11,7 +12,7 @@ namespace GI
 	/// <summary>
 	/// Myftp.cs contains an inner static class of GIGatherer
 	/// </summary>
-	public partial class GiGatherer
+	public partial class GIGatherer
 	{
 		#region instanzvariablen
 		private DateTime _myTime;
@@ -21,16 +22,16 @@ namespace GI
 
 		#region Sigleton
 
-		private static GiGatherer _g;
+		private static GIGatherer _g;
 		private static readonly object Padlock = new object();
 
-		GiGatherer()
+		GIGatherer()
 		{
 
 		}
 
 
-		public static GiGatherer Instance
+		public static GIGatherer Instance
 		{
 			get
 			{
@@ -38,7 +39,7 @@ namespace GI
 				{
 					if (_g == null)
 					{
-						_g = new GiGatherer
+						_g = new GIGatherer
                         {
                             _myTime = DateTime.Now
                         };
@@ -65,7 +66,7 @@ namespace GI
 		public string IpAddress { get { return _gateIPaddress; } }
 
 		#region FTP-Related
-		private List<GiFile> FtpDirectory(string path)
+		private List<GIFile> FtpDirectory(string path)
         {
             if (IpAddress == null)
             {
@@ -75,11 +76,11 @@ namespace GI
             {
                 MyClientConnect();
                 Thread.Sleep(100);
-                List<GiFile> ftp = new List<GiFile>();
+                List<GIFile> ftp = new List<GIFile>();
                 FtpListItem[] items = _myClient.GetListing(path);
                 foreach (FtpListItem item in items)
                 {
-                    GiFile fileinfo = new GiFile(item.Name)
+                    GIFile fileinfo = new GIFile(item.Name)
                     {
                         Size = item.Size
                     };
@@ -111,7 +112,7 @@ namespace GI
 		#endregion
 
 
-		public async Task<List<GiFile>> GetFileInformations(IProgress<int> progress)
+		public async Task<List<GIFile>> GetFileInformations(IProgress<int> progress)
         {
             if (IpAddress == null)
             {
@@ -124,7 +125,7 @@ namespace GI
                 int unstablecounter = 40;
                 string file;
                 ProgressReport();
-                List<GiFile> list = await Task.Run(() => FtpDirectory("/"));
+                List<GIFile> list = await Task.Run(() => FtpDirectory("/"));
                 progressreport += 3;
                 ProgressReport();
                 var item = list.Find(x => x.Filename == "#actual.sta");
@@ -155,7 +156,7 @@ namespace GI
 
                 //erst wenn Configuration stabil andere dateien holen!
 
-                foreach (GiFile it in list)
+                foreach (GIFile it in list)
                 {
                     progressreport += stepWidth;
                     ProgressReport();
@@ -169,6 +170,7 @@ namespace GI
                 MyClientDisconnect();
                 progressreport = 100;
                 ProgressReport();
+                
                 GC.Collect();
                 return list;
                 void ProgressReport()

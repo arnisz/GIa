@@ -13,29 +13,29 @@ namespace GI
         public const string FtpUsername = "instrumentation4";
         public const string FtpPassword = "gantner";
     }
-    public class GiGate : IDisposable
+    public class GIGate : IDisposable
     {
         public int ModulesCount;
         private bool _initialized = false;
         private String _ipAddress;
         private String _serialNumber;
-        private List<GiFile> _liGiFiles;
+        private List<GIFile> _liGiFiles;
 
-        private GiModule[] _gIModules;
-        private GiGatherer _gIGatherer;
+        private GIModule[] _gIModules;
+        private GIGatherer _gIGatherer;
 
         #region Sigleton
 
-        private static GiGate _g = null;
+        private static GIGate _g = null;
         private static readonly object Padlock = new object();
 
-        GiGate()
+        GIGate()
         {
-            _ipAddress = GiGatherer.Instance.IpAddress;
+            _ipAddress = GIGatherer.Instance.IpAddress;
         }
         private DateTime _myTime;
 
-        public static GiGate Instance
+        public static GIGate Instance
         {
             get
             {
@@ -43,7 +43,7 @@ namespace GI
                 {
                     if (_g == null)
                     {
-                        _g = new GiGate();
+                        _g = new GIGate();
                         _g._myTime = DateTime.Now;
                     }
                     return _g;
@@ -53,7 +53,7 @@ namespace GI
 
         #endregion
 
-        public GiChannel GetChannelByNumber(int Channelnumber)
+        public GIChannel GetChannelByNumber(int Channelnumber)
         {
             foreach (var giModule in _gIModules)
             {
@@ -81,22 +81,22 @@ namespace GI
             }
         }
 
-        public GiFile GiConfigFile(string Filename)
+        public GIFile GiConfigFile(string Filename)
         {
             return _liGiFiles.Find(x => x.Filename == Filename);
         }
 
-        public ref List<GiFile> GiConfigfilesList()
+        public ref List<GIFile> GiConfigfilesList()
         {
             return ref _liGiFiles;
         }
 
-        public List<GiModule> ListModules()
+        public List<GIModule> ListModules()
         {
-            List<GiModule> modules = new List<GiModule>();
+            List<GIModule> modules = new List<GIModule>();
             try
             {
-                foreach (GiModule module in _gIModules)
+                foreach (GIModule module in _gIModules)
                     if (module == null) { }
                     else
                     {
@@ -123,10 +123,10 @@ namespace GI
                 {
                     if (_ipAddress == null)
                     {
-                        _ipAddress = GiGatherer.Instance.IpAddress;
+                        _ipAddress = GIGatherer.Instance.IpAddress;
                     }
-                    GiGatherer.Instance.SetIp(_ipAddress);
-                    _liGiFiles = await GiGatherer.Instance.GetFileInformations(Progress);
+                    GIGatherer.Instance.SetIp(_ipAddress);
+                    _liGiFiles = await GIGatherer.Instance.GetFileInformations(Progress);
                     var actual = _liGiFiles.Find(x => x.Filename == "#actual.sta");
                     var summary = _liGiFiles.Find(x => x.Filename == "#summary.sta");
 
@@ -139,13 +139,13 @@ namespace GI
 
                     var modulelines = regexLine.Matches(actual.Content);
                     ModulesCount = modulelines.Count;
-                    _gIModules = new GiModule[ModulesCount];
+                    _gIModules = new GIModule[ModulesCount];
 
                     int mcount = 0;
                     foreach (Match i in modulelines)
                     {
                         string item = i.Value;
-                        _gIModules[mcount] = new GiModule(mcount);
+                        _gIModules[mcount] = new GIModule(mcount);
 
                         int adr = int.Parse(regexAdress.Match(item).Value.Substring(3));
                         _gIModules[mcount].Adress = adr;

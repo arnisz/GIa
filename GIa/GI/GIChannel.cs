@@ -5,13 +5,13 @@ using fmt = GI.Formats.PatternCategory;
 namespace GI
 {
 
-    public class GiChannel
+    public class GIChannel
     {
         private double _cFaktor;
         private double _cOffset;
         private string _variableName;
         private string _config;
-        private GiModule _gIModule;
+        private GIModule _gIModule;
         private int _dadi;
 
         public string VariableName { get { return _variableName; } private set { _variableName = value; } }
@@ -51,7 +51,7 @@ namespace GI
         public bool DataDirectionOut => (_dadi != 0);
 
 
-        public GiChannel(string Config, GiModule gIModule)
+        public GIChannel(string Config, GIModule gIModule)
         {
             _config = Config;
 
@@ -73,7 +73,7 @@ namespace GI
             Regex regxSection = new Regex("(?<=\\[).*(?=\\])");
             string secname = regxSection.Match(_config).Value;
             string summarySection = $"M{_gIModule.ModuleNumberInConfig}_{secname}";
-            var summarySta = GiGate.Instance.GiConfigFile("#summary.sta").Content;
+            var summarySta = GIGate.Instance.GiConfigFile("#summary.sta").Content;
             Regex regxChannelPositions = new Regex("(?<=\\W\\[M)\\d{1,2}_V\\d{1,2}");
             regxChannelPositions.Matches(summarySta);
 

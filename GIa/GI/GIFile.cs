@@ -1,11 +1,11 @@
 ﻿namespace GI
 {
-    public class GiFile
+    public class GIFile
     {
         private string _name;
         private string _content;
 
-        public GiFile(string Name)
+        public GIFile(string Name)
         {
             _name = Name;
         }

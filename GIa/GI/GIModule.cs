@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace GI
 {
-	public class GiModule
+	public class GIModule
 	{
 		private string _modulType;
 		private int _channelCount;
-		private GiChannel[] _gIChannels;
+		private GIChannel[] _gIChannels;
 		private bool _isInitialized = false;
         private int _hconnection = -1;
 
@@ -19,14 +19,14 @@ namespace GI
 		//#summary.sta weist dem ersten Modul 0 zu. Reihenfolge Aufsteigend
         private int _moduleNumberinConfig;
 
-		private GiGate _gIGate;
+		private GIGate _gIGate;
 
 		
 
-		public GiModule(int ModuleinConfig)
+		public GIModule(int ModuleinConfig)
 		{
 			this._moduleNumberinConfig = ModuleinConfig;
-			_gIGate = GiGate.Instance;
+			_gIGate = GIGate.Instance;
 		}
 
 		public int ModuleNumberInConfig { get { return _moduleNumberinConfig; } private set { } }	
@@ -36,7 +36,7 @@ namespace GI
 
 		public long SerialNumber { get; set; }
 
-		public List<GiChannel> GetGiChannels {
+		public List<GIChannel> GetGiChannels {
 			get 
 			{
 				if (!_isInitialized)
@@ -68,11 +68,11 @@ namespace GI
 
 				this._channelCount = int.Parse(scc);
 
-				_gIChannels = new GiChannel[_channelCount];
+				_gIChannels = new GIChannel[_channelCount];
 				for (int i = 0; i < _channelCount; i++)
 				{
                     Regex regxV = new Regex(GI.Formats.PatternCategory.InitFormatSectionbuilder($"V{i}"), RegexOptions.IgnoreCase);
-					_gIChannels[i] = new GiChannel(regxV.Match(this.ConfigFile).Value,this);
+					_gIChannels[i] = new GIChannel(regxV.Match(this.ConfigFile).Value,this);
 					
                     //
                 }

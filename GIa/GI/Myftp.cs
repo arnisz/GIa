@@ -7,7 +7,7 @@ using System.Windows.Forms;
 
 namespace GI
 {
-    public partial class GiGatherer
+    public partial class GIGatherer
     {
 
         protected static class Myftp
@@ -60,14 +60,14 @@ namespace GI
                 }
             }
 
-            public static List<GiFile> GetFtpDirectory(string path)
+            public static List<GIFile> GetFtpDirectory(string path)
             {
-                List<GiFile> ftpDirectory = new List<GiFile>();
+                List<GIFile> ftpDirectory = new List<GIFile>();
                 Connect();
                 FtpListItem[] v = _ftpClient.GetListing("/");
                 foreach (var f in v)
                 {
-                    GiFile file = new GiFile(f.Name);
+                    GIFile file = new GIFile(f.Name);
                     file.Size = f.Size;
 
                     ftpDirectory.Add(file);

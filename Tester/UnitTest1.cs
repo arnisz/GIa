@@ -12,14 +12,14 @@ namespace Tester
         [TestMethod]
         public void Ganterer_start()
         {
-            GiGatherer gatherer = GiGatherer.Instance;
+            GIGatherer gatherer = GIGatherer.Instance;
             Assert.IsNotNull(gatherer);
         }
 
         [TestMethod]
         public async Task ReadAllFilesbyFTP()
         {
-            GiGatherer gatherer = GiGatherer.Instance;
+            GIGatherer gatherer = GIGatherer.Instance;
             gatherer.SetIp("192.168.17.99");
             Task.Run(async () =>
             {
