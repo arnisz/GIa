@@ -1,15 +1,9 @@
-﻿using System;
+﻿using GantnerInstruments;
+using GI;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using GantnerInstruments;
-using GI;
 
 namespace GIa
 {
@@ -24,17 +18,18 @@ namespace GIa
 
         private void button1_Click(object sender, EventArgs e)
         {
-            GiGate giGate = GiGate.Instance;
-            if (textBox1.Text=="") textBox1.Text = "192.168.17.99";
-            giGate.IpAddress=textBox1.Text;
+            GIGate giGate = GIGate.Instance;
+            if (textBox1.Text == "") textBox1.Text = "192.168.17.99";
+            giGate.IPAddress = textBox1.Text;
 
             MessageBox.Show(GiGate.Instance.IpAddress);
             if (Netzwerk.Ip.IsValidIpAdress(textBox1.Text))
             {
                 button2.Enabled = true;
-            } else
+            }
+            else
             {
-                button2.Enabled=false;
+                button2.Enabled = false;
             }
 
             listBox1.Items.Clear();
@@ -49,7 +44,7 @@ namespace GIa
                 listBox1.Items.Add(entry);
             }
             */
-            
+
 
 
         }
@@ -67,20 +62,21 @@ namespace GIa
                 // Action<int> ReportProgress = new Action<int>(x => MessageBox.Show(x.ToString()));
                 var progressIndicator = new Progress<int>(ReportProgress);
 
-                GiGate g = GiGate.Instance;
-                GiGatherer gIGatherer = GiGatherer.Instance;
+                GIGate g = GIGate.Instance;
+                GIGatherer gIGatherer = GIGatherer.Instance;
             
                 await Task.Run(()=> g.Initialize(progressIndicator));
             
-                List<GiModule> gIModulesList = g.ListModules();
-                string info = $"Es sind {g.ModulesCount} Messmodule vorhanden. \r";
-                foreach (GiModule module in gIModulesList)
+                List<GIModule> gIModulesList = g.ListModules();
+                string info = $"Es sind {g.modulesCount} Messmodule vorhanden. \r";
+                foreach (GIModule module in gIModulesList)
                 {
                     info += $" Adresse {module.Adress} UART: {module.Uart} hat S/N {module.SerialNumber} \r";
                 }
                 MessageBox.Show(info);
                 button3.Enabled = true;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
@@ -117,7 +113,7 @@ namespace GIa
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var lbi = (GiModule) listBox1.SelectedItem;
+            var lbi = (GIModule) listBox1.SelectedItem;
             listBox2.Items.Clear();
 
             string channels = "";
@@ -148,12 +144,12 @@ namespace GIa
             double dTempInfo=0;
 
             int iTempInfo;
-            ret = Hsp._CD_eGateHighSpeedPort_Init(controllerIp, 7, (int)Hsp.Connectiontype.Online, 100, ref hclient,
-                ref hconnection);
-            Hsp._CD_eGateHighSpeedPort_ReadOnline_Single(hconnection, 1, ref dTempInfo);
+            ret = HSP._CD_eGateHighSpeedPort_Init(controllerIP, 7, (int)HSP.CONNECTIONTYPE.Online, 100, ref HCLIENT,
+                ref HCONNECTION);
+            HSP._CD_eGateHighSpeedPort_ReadOnline_Single(HCONNECTION, 1, ref dTempInfo);
             string d = dTempInfo.ToString();
             textBox3.Text += d + "\r\n";
-            Hsp._CD_eGateHighSpeedPort_Close(hconnection,hclient);
+            HSP._CD_eGateHighSpeedPort_Close(HCONNECTION,HCLIENT);
 
         }
 
@@ -167,16 +163,16 @@ namespace GIa
             string strTemp = "";
             double dTempInfo = 0;
 
-            GiChannel c = (GiChannel)listBox2.SelectedItem;
+            GIChannel c = (GIChannel)listBox2.SelectedItem;
             
 
             int iTempInfo;
-            ret = Hsp._CD_eGateHighSpeedPort_Init(GiGate.Instance.IpAddress, 7, (int)Hsp.Connectiontype.Online, 100, ref hclient,
-                ref hconnection);
-            Hsp._CD_eGateHighSpeedPort_ReadOnline_Single(hconnection, c.AccessIndex+1, ref dTempInfo);
+            ret = HSP._CD_eGateHighSpeedPort_Init(GIGate.Instance.IPAddress, 7, (int)HSP.CONNECTIONTYPE.Online, 100, ref HCLIENT,
+                ref HCONNECTION);
+            HSP._CD_eGateHighSpeedPort_ReadOnline_Single(HCONNECTION, c.AccessIndex+1, ref dTempInfo);
             string d = dTempInfo.ToString();
             textBox3.Text += d + "\r\n";
-            Hsp._CD_eGateHighSpeedPort_Close(hconnection, hclient);
+            HSP._CD_eGateHighSpeedPort_Close(HCONNECTION, HCLIENT);
         }
     }
 }

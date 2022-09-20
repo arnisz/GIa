@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using GantnerInstruments;
 
@@ -164,7 +165,8 @@ namespace GI
 
                         mcount++;
                     }
-
+                    GC.Collect();
+                    System.Threading.Thread.Sleep(100);
                     _initialized = true;
                 }
 
