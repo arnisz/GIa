@@ -1,11 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GantnerInstruments;
@@ -38,18 +33,7 @@ namespace GIa
             }
 
             listBox1.Items.Clear();
-            // var mod = giGate.FindModules();
-
-            /*
-
-            dir = g.FTPDirectory("/");
-            
-            foreach (var entry in dir)
-            {
-                listBox1.Items.Add(entry);
-            }
-            */
-            
+          
 
 
         }
@@ -72,24 +56,20 @@ namespace GIa
             
                 await Task.Run(()=> g.Initialize(progressIndicator));
             
-                List<GIModule> gIModulesList = g.ListModules();
-                string info = $"Es sind {g.modulesCount} Messmodule vorhanden. \r";
-                foreach (GIModule module in gIModulesList)
-                {
-                    info += $" Adresse {module.Adress} UART: {module.Uart} hat S/N {module.SerialNumber} \r";
-                }
-                MessageBox.Show(info);
+                // List<GIModule> gIModulesList = g.ListModules();
+                // string info = $"Es sind {g.modulesCount} Messmodule vorhanden. \r";
+                // foreach (GIModule module in gIModulesList)
+                // {
+                //     info += $" Adresse {module.Adress} UART: {module.Uart} hat S/N {module.SerialNumber} \r";
+                // }
+                // MessageBox.Show(info);
                 button3.Enabled = true;
+
             } catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
             }
 
-
-        }
-
-        private void textBox2_TextChanged(object sender, EventArgs e)
-        {
 
         }
 
@@ -110,10 +90,6 @@ namespace GIa
             }
         }
 
-        private void listBox1_DoubleClick(object sender, EventArgs e)
-        {
-
-        }
 
         private void listBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
@@ -161,22 +137,32 @@ namespace GIa
         {
             //string controllerIP = "192.168.17.99";
             int ret = 0;
-            int HCONNECTION = -1;
-            int HCLIENT = -1;
+
             byte[] baTempInfo = new byte[1024];
             string strTemp = "";
-            double dTempInfo = 0;
+
 
             GIChannel c = (GIChannel)listBox2.SelectedItem;
-            
+            unsafe
+            {
+                int[] HC = {-1,-1};
+                double dTempInfo = 0;
+                fixed (int* pointerto = &HC[0])
+                {
 
-            int iTempInfo;
-            ret = HSP._CD_eGateHighSpeedPort_Init(GIGate.Instance.IPAddress, 7, (int)HSP.CONNECTIONTYPE.Online, 100, ref HCLIENT,
-                ref HCONNECTION);
-            HSP._CD_eGateHighSpeedPort_ReadOnline_Single(HCONNECTION, c.AccessIndex+1, ref dTempInfo);
-            string d = dTempInfo.ToString();
-            textBox3.Text += d + "\r\n";
-            HSP._CD_eGateHighSpeedPort_Close(HCONNECTION, HCLIENT);
+                    ref int HCONNECTION = ref HC[0];
+                    ref int HCLIENT = ref HC[1];
+
+                    ret = HSP._CD_eGateHighSpeedPort_Init(GIGate.Instance.IPAddress, 22, (int)HSP.CONNECTIONTYPE.Online,
+                        100, ref HCLIENT,
+                        ref HCONNECTION);
+
+                    HSP._CD_eGateHighSpeedPort_ReadOnline_Single(HCONNECTION, c.AccessIndex + 1, ref dTempInfo);
+                    string d = dTempInfo.ToString();
+                    textBox3.Text += d + "\r\n";
+                    HSP._CD_eGateHighSpeedPort_Close(HCONNECTION, HCLIENT);
+                }
+            }
         }
     }
 }

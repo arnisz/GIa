@@ -84,20 +84,6 @@ namespace GI
 			var summarySta = GIGate.Instance.GIConfigFile("#summary.sta").Content;
             Regex regxChannelPositions = new Regex("(?<=\\W\\[M)\\d{1,2}_V\\d{1,2}");
             var hits = regxChannelPositions.Matches(summarySta);
-            /*
-            Console.WriteLine(hits.Count);
-            int countMatch = 0;
-            foreach (Match match in hits)
-            {
-                countMatch ++;
-                if (summarySection == "M"+match.Value)
-                {break;}
-                
-            }
-
-            myChannelNumber = countMatch;
-            Console.WriteLine(countMatch);
-            */
 
 			Regex regexCF = new Regex(fmt.InitFormatSectionbuilder(summarySection), RegexOptions.IgnoreCase);
 			var cf = regexCF.Match(summarySta).Value;

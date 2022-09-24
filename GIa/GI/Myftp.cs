@@ -1,9 +1,11 @@
 using FluentFTP;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Windows.Forms;
+
 
 namespace GI
 {
@@ -58,24 +60,10 @@ namespace GI
                 {
                     ftpClient.Disconnect();
                 }
-            }
 
-            public static List<GIFile> GetFTPDirectory(string path)
-            {
-                List<GIFile> ftpDirectory = new List<GIFile>();
-                Connect();
-                FtpListItem[] v = ftpClient.GetListing("/");
-                foreach (var f in v)
-                {
-                    GIFile file = new GIFile(f.Name);
-                    file.Size = f.Size;
-
-                    ftpDirectory.Add(file);
-                }
-                return ftpDirectory;
 
             }
-
+            
         }
     }
 }

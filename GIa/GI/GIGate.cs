@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using GantnerInstruments;
 
 namespace GI
@@ -166,6 +168,7 @@ namespace GI
                     }
 
                     _initialized = true;
+
                 }
 
             }
