@@ -47,6 +47,7 @@ namespace GI
                         } catch (Exception ex)
                         {
                             MessageBox.Show(ex.Message);
+                            Application.Exit();
                         }
 
                     }

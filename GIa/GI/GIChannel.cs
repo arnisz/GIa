@@ -1,7 +1,12 @@
 using System;
+using System.Data.Common;
 using System.Text.RegularExpressions;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using GantnerInstruments;
 using GI.Formats;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using fmt=GI.Formats.PatternCategory;
 
 
@@ -10,12 +15,17 @@ namespace GI
 
 	public class GIChannel
 	{
+        public delegate void MeasResult(double[] values);
+
 		private double cFaktor;
 		private double cOffset;
 		private string variableName;
 		private string _config;
         private GIModule gIModule;
 		private int dadi;
+
+        private int[] _HC = { -1, -1 };
+        private double _dtempInfo;
 
 		public string VariableName { get { return variableName; } private set { }}
 
@@ -38,14 +48,59 @@ namespace GI
 
         public int AccessIndex { get; private set; }
 
-        public double Meas 
+        private void OpenChannel()
         {
-            get
+            unsafe
             {
+                double dTempInfo = 0;
+                fixed (int* pointerto = &_HC[0])
+                {
 
-                return 0;
-            } 
-            private set{}
+                    ref int HCONNECTION = ref _HC[0];
+                    ref int HCLIENT = ref _HC[1];
+                    int ret;
+
+                    ret = HSP._CD_eGateHighSpeedPort_Init(GIGate.Instance.IPAddress, 22, (int)HSP.CONNECTIONTYPE.Online,
+                        100, ref HCLIENT,
+                        ref HCONNECTION);
+
+                }
+            }
+        }
+
+        private void CloseChannel()
+        {
+            if (_HC[0] == 0 && _HC[1] == 0)
+            {
+                HSP._CD_eGateHighSpeedPort_Close(_HC[0], _HC[1]);
+            }
+        }
+
+        public Task<Double[]> Meas(int times)
+        {
+            Func<double[]> fetchAction = delegate ()
+            {
+                double[] ret = new double[times];
+                OpenChannel();
+                _dtempInfo = 0;
+                double dSum = 0;
+
+                if (_HC[0] == 0 && _HC[1] == 0)
+                {
+                    for (int i = 0; i < times; i++)
+                    {
+                        HSP._CD_eGateHighSpeedPort_ReadOnline_Single(this._HC[0], this.AccessIndex + 1, ref _dtempInfo);
+                        ret[i] = _dtempInfo;
+                        System.Threading.Thread.Sleep(100);
+                    }
+                }
+
+                CloseChannel();
+                return ret;
+            };
+
+            return Task.Run(fetchAction);
+
         }
 
 
@@ -124,5 +179,5 @@ namespace GI
 		{
 			return $"C:{variableName} Zugriffsnummer:{AccessIndex}";
 		}
-	}
+    }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using GantnerInstruments;
@@ -119,7 +120,6 @@ namespace GIa
             int ret = 0;
             int HCONNECTION = -1;
             int HCLIENT = -1;
-            byte[] baTempInfo = new byte[1024];
             string strTemp = "";
             double dTempInfo=0;
 
@@ -138,31 +138,46 @@ namespace GIa
             //string controllerIP = "192.168.17.99";
             int ret = 0;
 
-            byte[] baTempInfo = new byte[1024];
-            string strTemp = "";
-
-
             GIChannel c = (GIChannel)listBox2.SelectedItem;
-            unsafe
+            var values = c.Meas(10).GetAwaiter().GetResult();
+
+            string strTemp = "";
+            double mittelwert = values.Average();
+
+            strTemp = mittelwert.ToString();
+
+            textBox3.Text = "Wert: " + strTemp + "\t";
+            strTemp = StdDiv(values).ToString();
+
+            textBox3.Text += "StdDiv: " + strTemp + "\t";
+
+            strTemp = StdDivMean(values).ToString();
+            textBox3.Text += "StdDivMean: " + strTemp + "\r\n";
+
+            foreach (double measdDouble in values)
             {
-                int[] HC = {-1,-1};
-                double dTempInfo = 0;
-                fixed (int* pointerto = &HC[0])
-                {
-
-                    ref int HCONNECTION = ref HC[0];
-                    ref int HCLIENT = ref HC[1];
-
-                    ret = HSP._CD_eGateHighSpeedPort_Init(GIGate.Instance.IPAddress, 22, (int)HSP.CONNECTIONTYPE.Online,
-                        100, ref HCLIENT,
-                        ref HCONNECTION);
-
-                    HSP._CD_eGateHighSpeedPort_ReadOnline_Single(HCONNECTION, c.AccessIndex + 1, ref dTempInfo);
-                    string d = dTempInfo.ToString();
-                    textBox3.Text += d + "\r\n";
-                    HSP._CD_eGateHighSpeedPort_Close(HCONNECTION, HCLIENT);
-                }
+                textBox3.Text += measdDouble + "\r\n";
             }
+        }
+
+        public static double StdDiv(double[] values)
+        {
+            double sum = 0;
+            double mittelw = values.Average();
+            foreach (double value in values)
+            {
+                sum += (value - mittelw) * (value - mittelw);
+            }
+
+            sum = sum / (values.Length-1);
+            sum = Math.Sqrt(sum);
+            return sum;
+        }
+
+        public static double StdDivMean(double[] values)
+        {
+            double stddiv = StdDiv(values);
+            return stddiv / Math.Sqrt(values.Length);
         }
     }
 }
