@@ -91,23 +91,29 @@ namespace GI
 			Regex regexDataType = new Regex("(?<=\\WDataType=)(\\w{1,16})(?!\\w)");
 			DataType = regexDataType.Match(cf).Value;
 
-            Regex regexDataFormat = new Regex("(?<=\\WFormat=)(%?\\d*\\.?\\d*f?)(?!\\w)");
+            //{fmt.Starter("Format=")}{fmt.Format}{fmt.EndLine}
+            Regex regexDataFormat = new Regex($"{fmt.Starter("Format=")}{fmt.Format}{fmt.EndLine}");
             DataFormat = regexDataFormat.Match(cf).Value;
 
-            Regex regexDataDirectionA = new Regex("(?<=\\WDataDirection=)(.{1,4})(?!\\w)");
+            //{fmt.Starter("DataDirection=")}{fmt.Any}{fmt.EndLine}
+            Regex regexDataDirectionA = new Regex($"{fmt.Starter("DataDirection=")}{fmt.Any}{fmt.EndLine}");
             DataDirectionA = regexDataDirectionA.Match(cf).Value.Trim();
 
-            Regex regexInpSplitDataFieldOffs = new Regex("(?<=\\WInpSplitDataFieldOffs=)((0(x|X)|#)[0-9a-fA-F]{1,4})(?!\\w)");
+            // {fmt.Starter("InpSplitDataFieldOffs=")}{fmt.Hexadecimal}{fmt.EndLine}
+            Regex regexInpSplitDataFieldOffs = new Regex($"{fmt.Starter("InpSplitDataFieldOffs=")}{fmt.Hexadecimal}{fmt.EndLine}");
             InpSplitDataFieldOffs = regexInpSplitDataFieldOffs.Match(cf).Value;
 
-            Regex regexInpCombDataFieldOffs = new Regex("(?<=\\WInpCombDataFieldOffs=)((0(x|X)|#)[0-9a-fA-F]{1,4})(?!\\w)");
+            // {fmt.Starter("InpCombDataFieldOffs=")}{fmt.Hexadecimal}{fmt.EndLine}
+            Regex regexInpCombDataFieldOffs = new Regex($"{fmt.Starter("InpCombDataFieldOffs=")}{fmt.Hexadecimal}{fmt.EndLine}");
             InpCombDataFieldOffs = regexInpCombDataFieldOffs.Match(cf).Value;
 
-            Regex regexAccessindex = new Regex("(?<=\\WAccessIndex=)(-?\\d{1,4})(?!\\w)");
+            //{fmt.Starter("AccessIndex=")}{fmt}{fmt.EndLine}
+            Regex regexAccessindex = new Regex($"{fmt.Starter("AccessIndex=")}{fmt.WholeNumber}{fmt.EndLine}");
 			string ai = regexAccessindex.Match(cf).Value;
             AccessIndex = int.Parse(ai);
 
-            Regex regexOutSplitDataFieldOffs = new Regex("(?<=\\WOutSplitDataFieldOffs=)((0(x|X)|#)[0-9a-fA-F]{1,4})(?!\\w)");
+            // {fmt.Starter("OutSplitDataFieldOffs=")}{fmt.Hexadecimal}{fmt.EndLine}
+            Regex regexOutSplitDataFieldOffs = new Regex($"{fmt.Starter("OutSplitDataFieldOffs=")}{fmt.Hexadecimal}{fmt.EndLine}");
             OutSplitDataFieldOffs = regexOutSplitDataFieldOffs.Match(cf).Value;
 
             Regex regexOutCombDataFieldOffs = new Regex($"{fmt.Starter("OutCombDataFieldOffs=")}{fmt.Hexadecimal}{fmt.EndLine}");

@@ -18,6 +18,8 @@ namespace GI.Formats
         public static PatternCategory WholeNumber => new PatternCategory("(-?\\d{1,4})");
         public static PatternCategory Double => new PatternCategory("(-?\\d*(\\.|,)?\\d*(E|e)?-?\\d{1,3})");
 
+        public static PatternCategory Format => new PatternCategory("(%?\\d*\\.?\\d*f?)");
+
         public static PatternCategory Any => new PatternCategory($".*");
 
         public static PatternCategory Starter(string s) => new PatternCategory($"(?<=\\W{s})");
